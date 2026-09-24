@@ -6,6 +6,9 @@ import SearchableSelect from '@/components/SearchableSelect';
 import MultiSelect from '@/components/MultiSelect';
 import RichTextEditor from '@/components/RichTextEditor';
 
+/* Flag to toggle Storefront Visibility section for online store in the future */
+const SHOW_STOREFRONT_VISIBILITY = false;
+
 const EMPTY_FORM = {
   name: '',
   sell_on_website: false,
@@ -1529,26 +1532,28 @@ export default function ProductForm({ productId }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
             {/* SELL ON WEBSITE CARD (TOP OF SIDEBAR) */}
-            <div style={{ background: 'var(--bg-card, #ffffff)', padding: 20, borderRadius: 12, border: '1px solid var(--border, #e2e8f0)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 14px 0', borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
-                Storefront Visibility
-              </h3>
+            {SHOW_STOREFRONT_VISIBILITY && (
+              <div style={{ background: 'var(--bg-card, #ffffff)', padding: 20, borderRadius: 12, border: '1px solid var(--border, #e2e8f0)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 14px 0', borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
+                  Storefront Visibility
+                </h3>
 
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={form.sell_on_website}
-                    onChange={e => setForm({ ...form, sell_on_website: e.target.checked })}
-                    style={{ width: 18, height: 18, accentColor: 'var(--primary, #2563eb)' }}
-                  />
-                  <div>
-                    <span style={{ fontWeight: 700, fontSize: 14, display: 'block', color: 'var(--text-base)' }}>Sell on Website</span>
-                    <span style={{ fontSize: 12, color: '#64748b' }}>Make this product visible & purchasable on the online shop</span>
-                  </div>
-                </label>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={form.sell_on_website}
+                      onChange={e => setForm({ ...form, sell_on_website: e.target.checked })}
+                      style={{ width: 18, height: 18, accentColor: 'var(--primary, #2563eb)' }}
+                    />
+                    <div>
+                      <span style={{ fontWeight: 700, fontSize: 14, display: 'block', color: 'var(--text-base)' }}>Sell on Website</span>
+                      <span style={{ fontSize: 12, color: '#64748b' }}>Make this product visible & purchasable on the online shop</span>
+                    </div>
+                  </label>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* FEATURED MAIN IMAGE CARD */}
             <div style={{ background: 'var(--bg-card, #ffffff)', padding: 20, borderRadius: 12, border: '1px solid var(--border, #e2e8f0)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>

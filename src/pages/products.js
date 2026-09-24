@@ -10,6 +10,8 @@ import TableLoader from '@/components/TableLoader';
 import * as XLSX from 'xlsx';
 
 const PAGE_SIZE = 15;
+/* Flag to toggle Sell on Website column if online store is disabled */
+const SHOW_ONLINE_STORE = false;
 
 function formatAttributesLabel(attributes) {
   if (!attributes) return '';
@@ -657,15 +659,15 @@ export default function ProductsPage() {
                 <th>Barcode</th>
                 <th>STOCK</th>
                 <th>Price</th>
-                <th>Sell on Website</th>
+                {SHOW_ONLINE_STORE && <th>Sell on Website</th>}
                 {canEditProduct && <th>Actions</th>}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <TableLoader cols={canEditProduct ? 11 : 10} />
+                <TableLoader cols={(canEditProduct ? 10 : 9) + (SHOW_ONLINE_STORE ? 1 : 0)} />
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={canEditProduct ? 11 : 10}><div className="empty-state"><div className="empty-state-icon"><PackageIcon size={32} /></div><p>No products found.</p></div></td></tr>
+                <tr><td colSpan={(canEditProduct ? 10 : 9) + (SHOW_ONLINE_STORE ? 1 : 0)}><div className="empty-state"><div className="empty-state-icon"><PackageIcon size={32} /></div><p>No products found.</p></div></td></tr>
               ) : paged.map((p, i) => {
                 const stock = selectedStore ? (storeStock[p.id] ?? 0) : p.stock;
                 return (
@@ -773,11 +775,13 @@ export default function ProductsPage() {
                         </div>
                       )}
                     </td>
-                    <td>
-                      <span className={`badge ${p.sell_on_website !== 0 && p.sell_on_website !== false ? 'badge-green' : 'badge-red'}`}>
-                        {p.sell_on_website !== 0 && p.sell_on_website !== false ? 'Yes' : 'No'}
-                      </span>
-                    </td>
+                    {SHOW_ONLINE_STORE && (
+                      <td>
+                        <span className={`badge ${p.sell_on_website !== 0 && p.sell_on_website !== false ? 'badge-green' : 'badge-red'}`}>
+                          {p.sell_on_website !== 0 && p.sell_on_website !== false ? 'Yes' : 'No'}
+                        </span>
+                      </td>
+                    )}
                     <td style={{ whiteSpace: 'nowrap' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'nowrap' }}>
                         <button className="btn btn-secondary btn-xs" onClick={() => openView(p)} title="View Product Details" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '5px 7px' }}>
