@@ -6,37 +6,25 @@ import Pagination from '@/components/Pagination';
 import TableLoader from '@/components/TableLoader';
 import {
   IconStore, IconEdit, IconTrash, IconMapPin, IconBox,
-  IconCalendar, IconPlus,
+  IconCalendar, IconPlus, IconRefresh, IconPhone, IconSearch,
 } from '@/components/Icons';
 
 const PAGE_SIZE = 10;
 const EMPTY = { name: '', address: '', phone: '' };
 
-const IconPhone = ({ size = 15, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-  </svg>
-);
-
-const IconSearch = ({ size = 15, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
 export default function StoresPage() {
-  const [stores, setStores]       = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [form, setForm]           = useState(EMPTY);
-  const [saving, setSaving]       = useState(false);
-  const [editModal, setEditModal] = useState(false);
-  const [editStore, setEditStore] = useState(null);
-  const [editForm, setEditForm]   = useState(EMPTY);
+  const [stores, setStores]         = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [addModal, setAddModal]     = useState(false);
+  const [form, setForm]             = useState(EMPTY);
+  const [saving, setSaving]         = useState(false);
+  const [editModal, setEditModal]   = useState(false);
+  const [editStore, setEditStore]   = useState(null);
+  const [editForm, setEditForm]     = useState(EMPTY);
   const [editSaving, setEditSaving] = useState(false);
-  const [page, setPage]           = useState(1);
-  const [search, setSearch]       = useState('');
-  const { canAdd, canEdit }       = useRole();
+  const [page, setPage]             = useState(1);
+  const [search, setSearch]         = useState('');
+  const { canAdd, canEdit }         = useRole();
 
   async function load() {
     setLoading(true);
@@ -65,6 +53,7 @@ export default function StoresPage() {
       if (!res.ok) throw new Error(data.message);
       toast.success('Stationery store added successfully.');
       setForm(EMPTY);
+      setAddModal(false);
       load();
     } catch (err) {
       toast.error(err.message);
@@ -111,8 +100,44 @@ export default function StoresPage() {
 
   return (
     <Layout title="Stores & Branches">
-      {/* ── Top Overview Banner / Stats ────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
+      {/* ── Top Header with Action ───────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-base)', display: 'flex', alignItems: 'center', gap: 10, letterSpacing: '-0.02em', margin: 0 }}>
+            Stationery Stores & Outlets
+            <span className="badge badge-indigo" style={{ fontSize: 13, fontWeight: 700, padding: '3px 10px' }}>
+              {stores.length} {stores.length === 1 ? 'Location' : 'Locations'}
+            </span>
+          </h1>
+          <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 4 }}>
+            Manage physical stationery shops, retail branches, and store inventory assignments
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            className="btn btn-secondary"
+            onClick={load}
+            disabled={loading}
+            title="Refresh Store List"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, height: 42, padding: '0 14px' }}
+          >
+            <IconRefresh size={15} /> Refresh
+          </button>
+          {canAdd && (
+            <button
+              className="btn btn-primary"
+              onClick={() => { setForm(EMPTY); setAddModal(true); }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 42, padding: '0 18px', fontWeight: 700, boxShadow: '0 4px 14px rgba(79, 70, 229, 0.35)' }}
+            >
+              <IconPlus size={16} /> Add New Store
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── Top Summary Stats Pills ──────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 20 }}>
         <div className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{
             width: 44,
@@ -129,7 +154,7 @@ export default function StoresPage() {
           </div>
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
-              Total Stores
+              Active Retail Stores
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-base)', lineHeight: 1.2 }}>
               {loading ? '—' : stores.length}
@@ -153,7 +178,7 @@ export default function StoresPage() {
           </div>
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
-              Assigned Stock Items
+              Total Assigned Products
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-base)', lineHeight: 1.2 }}>
               {loading ? '—' : totalProducts}
@@ -162,42 +187,220 @@ export default function StoresPage() {
         </div>
       </div>
 
-      {/* ── Main Layout: Create Form + Stores Table ──────────────── */}
-      <div className="grid-sidebar">
-        {canAdd && (
-          <div className="card" style={{ height: 'fit-content' }}>
-            <div className="card-header">
-              <div>
-                <span className="card-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <IconStore size={18} color="var(--primary)" /> Add New Store
-                </span>
-                <div className="card-sub" style={{ marginTop: 2 }}>Create a retail branch or stationery outlet</div>
+      {/* ── Full Width Modern Stores Data Table ─────────────────── */}
+      <div className="card" style={{ overflow: 'hidden' }}>
+        <div className="card-header" style={{ flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-base)' }}>Store Directory</span>
+            {search && (
+              <span className="badge badge-gray" style={{ fontSize: 11.5 }}>
+                {filtered.length} found
+              </span>
+            )}
+          </div>
+
+          <div style={{ position: 'relative', width: 300, maxWidth: '100%' }}>
+            <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none', display: 'flex' }}>
+              <IconSearch size={14} />
+            </span>
+            <input
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search store by name, phone, or address…"
+              style={{ paddingLeft: 36, fontSize: 13, height: 40, borderRadius: 10 }}
+            />
+          </div>
+        </div>
+
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style={{ width: 50, textAlign: 'center' }}>#</th>
+                <th style={{ minWidth: 220 }}>Store / Branch Name</th>
+                <th style={{ minWidth: 160 }}>Contact Phone</th>
+                <th style={{ minWidth: 260 }}>Location Address</th>
+                <th style={{ minWidth: 130, textAlign: 'center' }}>Stock Items</th>
+                <th style={{ minWidth: 140 }}>Created Date</th>
+                {canEdit && <th style={{ width: 140, textAlign: 'right' }}>Actions</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <TableLoader cols={canEdit ? 7 : 6} />
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={canEdit ? 7 : 6}>
+                    <div className="empty-state" style={{ padding: '48px 20px' }}>
+                      <div className="empty-state-icon" style={{ width: 56, height: 56 }}>
+                        <IconStore size={28} />
+                      </div>
+                      <p style={{ fontSize: 16, fontWeight: 700, marginTop: 12 }}>{search ? 'No stores match your search' : 'No stationery stores found'}</p>
+                      <span style={{ color: 'var(--text-muted)' }}>{search ? 'Try searching with a different keyword or clear the search' : 'Click "+ Add New Store" above to register your first branch'}</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : paged.map((s, i) => {
+                const initial = (s.name || 'S').trim().charAt(0).toUpperCase();
+                return (
+                  <tr key={s.id} style={{ transition: 'background 0.15s ease' }}>
+                    <td style={{ textAlign: 'center', color: 'var(--text-faint)', fontSize: 12.5, fontWeight: 600 }}>
+                      {(page - 1) * PAGE_SIZE + i + 1}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{
+                          width: 38,
+                          height: 38,
+                          borderRadius: 10,
+                          background: 'var(--gradient-primary)',
+                          color: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 15,
+                          fontWeight: 800,
+                          boxShadow: '0 2px 8px rgba(79, 70, 229, 0.25)',
+                          flexShrink: 0
+                        }}>
+                          {initial}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-base)' }}>
+                            {s.name}
+                          </div>
+                          <div style={{ fontSize: 11.5, color: 'var(--text-faint)', marginTop: 2 }}>
+                            Branch ID #{s.id}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {s.phone ? (
+                        <a
+                          href={`tel:${s.phone}`}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            color: 'var(--primary)',
+                            fontWeight: 600,
+                            fontSize: 13,
+                            background: 'var(--primary-light)',
+                            padding: '4px 10px',
+                            borderRadius: 6,
+                            textDecoration: 'none'
+                          }}
+                        >
+                          <IconPhone size={13} color="var(--primary)" />
+                          {s.phone}
+                        </a>
+                      ) : (
+                        <span style={{ color: 'var(--text-faint)', fontSize: 12 }}>Not provided</span>
+                      )}
+                    </td>
+                    <td>
+                      {s.address ? (
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, fontSize: 13, color: 'var(--text-muted)' }}>
+                          <IconMapPin size={15} color="var(--text-faint)" style={{ flexShrink: 0, marginTop: 2 }} />
+                          <span style={{ lineHeight: 1.4 }}>{s.address}</span>
+                        </div>
+                      ) : (
+                        <span style={{ color: 'var(--text-faint)', fontSize: 12 }}>—</span>
+                      )}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`badge ${s.product_count > 0 ? 'badge-indigo' : 'badge-gray'}`} style={{ padding: '4px 12px', fontSize: 12, fontWeight: 700 }}>
+                        {s.product_count || 0} products
+                      </span>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-muted)', fontSize: 12.5 }}>
+                        <IconCalendar size={13} color="var(--text-faint)" />
+                        {new Date(s.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </div>
+                    </td>
+                    {canEdit && (
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
+                          <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => openEdit(s)}
+                            title="Edit Store Branch"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12 }}
+                          >
+                            <IconEdit size={13} /> Edit
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleDelete(s.id, s.name)}
+                            title="Delete Store Branch"
+                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '5px 8px', fontSize: 12 }}
+                          >
+                            <IconTrash size={13} />
+                          </button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <Pagination page={page} total={filtered.length} pageSize={PAGE_SIZE} onChange={setPage} />
+      </div>
+
+      {/* ── Add New Store Modal ──────────────────────────────────── */}
+      {addModal && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setAddModal(false)}>
+          <div className="modal" style={{ maxWidth: 500 }}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  background: 'var(--primary-light)',
+                  color: 'var(--primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <IconStore size={20} />
+                </div>
+                <div>
+                  <span className="modal-title" style={{ fontSize: 17, fontWeight: 800 }}>Add New Store Branch</span>
+                  <div style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Register a retail outlet or stationery location</div>
+                </div>
               </div>
+              <button className="modal-close" onClick={() => setAddModal(false)}>✕</button>
             </div>
             <form onSubmit={handleAdd}>
-              <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 22 }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
                     Store / Branch Name <span style={{ color: 'var(--danger)' }}>*</span>
                   </label>
                   <input
                     value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
-                    placeholder="e.g. Central City Stationery Hub"
+                    placeholder="e.g. Invincible Stationary - Main Branch"
                     required
+                    style={{ height: 42, borderRadius: 8 }}
                   />
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
                     Contact Phone Number
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none' }}>
-                      <IconPhone size={14} />
+                    <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none', display: 'flex' }}>
+                      <IconPhone size={15} />
                     </span>
                     <input
-                      style={{ paddingLeft: 34 }}
+                      style={{ paddingLeft: 36, height: 42, borderRadius: 8 }}
                       value={form.phone}
                       onChange={e => setForm({ ...form, phone: e.target.value })}
                       placeholder="e.g. +91 98765 43210"
@@ -206,239 +409,85 @@ export default function StoresPage() {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6 }}>
-                    Branch Location & Address
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    Location Address
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: 12, top: 12, color: 'var(--text-faint)', pointerEvents: 'none' }}>
-                      <IconMapPin size={14} />
+                    <span style={{ position: 'absolute', left: 12, top: 12, color: 'var(--text-faint)', pointerEvents: 'none', display: 'flex' }}>
+                      <IconMapPin size={15} />
                     </span>
                     <textarea
-                      style={{ paddingLeft: 34 }}
+                      style={{ paddingLeft: 36, borderRadius: 8 }}
                       value={form.address}
                       onChange={e => setForm({ ...form, address: e.target.value })}
-                      placeholder="Street, locality, city, pincode…"
+                      placeholder="Full street address, area, city, pincode…"
                       rows={3}
                     />
                   </div>
                 </div>
-
-                <button
-                  className="btn btn-primary"
-                  type="submit"
-                  disabled={saving}
-                  style={{ width: '100%', justifyContent: 'center', marginTop: 6 }}
-                >
-                  {saving ? 'Creating Branch…' : '+ Create Store Branch'}
+              </div>
+              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-light)', padding: '16px 22px', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setAddModal(false)} style={{ height: 40 }}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={saving} style={{ height: 40, fontWeight: 700 }}>
+                  {saving ? 'Creating Store…' : '+ Create Store'}
                 </button>
               </div>
             </form>
           </div>
-        )}
-
-        {/* ── Stores Table Card ── */}
-        <div className="card">
-          <div className="card-header" style={{ flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <span className="card-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                All Registered Branches
-                <span className="badge badge-indigo">
-                  {filtered.length} {filtered.length === 1 ? 'branch' : 'branches'}
-                </span>
-              </span>
-              <div className="card-sub" style={{ marginTop: 2 }}>Manage retail outlets, inventory allocations, and details</div>
-            </div>
-
-            <div style={{ position: 'relative', width: 260, maxWidth: '100%' }}>
-              <span style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none', display: 'flex' }}>
-                <IconSearch size={14} />
-              </span>
-              <input
-                value={search}
-                onChange={e => { setSearch(e.target.value); setPage(1); }}
-                placeholder="Search branches, phone, city…"
-                style={{ paddingLeft: 34, fontSize: 13, height: 38 }}
-              />
-            </div>
-          </div>
-
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th style={{ width: 48 }}>#</th>
-                  <th>Store Details</th>
-                  <th className="hide-mobile">Contact Phone</th>
-                  <th className="hide-mobile">Location Address</th>
-                  <th className="hide-mobile" style={{ textAlign: 'center' }}>Products</th>
-                  <th className="hide-mobile">Created</th>
-                  {canEdit && <th style={{ textAlign: 'right' }}>Actions</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <TableLoader cols={canEdit ? 7 : 6} />
-                ) : filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={canEdit ? 7 : 6}>
-                      <div className="empty-state" style={{ padding: 40 }}>
-                        <div className="empty-state-icon">
-                          <IconStore size={26} />
-                        </div>
-                        <p>{search ? 'No branches match your search.' : 'No branches created yet.'}</p>
-                        <span>{search ? 'Try adjusting your search terms' : 'Add your first stationery store branch from the left panel'}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ) : paged.map((s, i) => {
-                  const initial = (s.name || 'S').trim().charAt(0).toUpperCase();
-                  return (
-                    <tr key={s.id}>
-                      <td style={{ color: 'var(--text-faint)', fontSize: 12 }}>
-                        {(page - 1) * PAGE_SIZE + i + 1}
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div style={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: 10,
-                            background: 'var(--gradient-primary)',
-                            color: '#ffffff',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 14,
-                            fontWeight: 800,
-                            boxShadow: '0 2px 8px rgba(79, 70, 229, 0.25)',
-                            flexShrink: 0
-                          }}>
-                            {initial}
-                          </div>
-                          <div>
-                            <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--text-base)' }}>
-                              {s.name}
-                            </div>
-                            <div style={{ fontSize: 11.5, color: 'var(--text-faint)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                              Branch ID #{s.id}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="hide-mobile">
-                        {s.phone ? (
-                          <a
-                            href={`tel:${s.phone}`}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--primary)', fontWeight: 600, fontSize: 13 }}
-                          >
-                            <IconPhone size={13} color="var(--primary)" />
-                            {s.phone}
-                          </a>
-                        ) : (
-                          <span style={{ color: 'var(--text-faint)', fontSize: 12 }}>—</span>
-                        )}
-                      </td>
-                      <td className="hide-mobile">
-                        {s.address ? (
-                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, maxWidth: 260, fontSize: 12.5, color: 'var(--text-muted)' }}>
-                            <IconMapPin size={14} color="var(--text-faint)" style={{ flexShrink: 0, marginTop: 2 }} />
-                            <span>{s.address}</span>
-                          </div>
-                        ) : (
-                          <span style={{ color: 'var(--text-faint)', fontSize: 12 }}>—</span>
-                        )}
-                      </td>
-                      <td className="hide-mobile" style={{ textAlign: 'center' }}>
-                        <span className={`badge ${s.product_count > 0 ? 'badge-indigo' : 'badge-gray'}`}>
-                          {s.product_count || 0} items
-                        </span>
-                      </td>
-                      <td className="hide-mobile" style={{ color: 'var(--text-faint)', fontSize: 12 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                          <IconCalendar size={12} />
-                          {new Date(s.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </div>
-                      </td>
-                      {canEdit && (
-                        <td style={{ textAlign: 'right' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
-                            <button
-                              className="btn btn-secondary btn-xs"
-                              onClick={() => openEdit(s)}
-                              title="Edit Store Branch"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 9px' }}
-                            >
-                              <IconEdit size={12} /> Edit
-                            </button>
-                            <button
-                              className="btn btn-danger btn-xs"
-                              onClick={() => handleDelete(s.id, s.name)}
-                              title="Delete Store Branch"
-                              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '5px 7px' }}
-                            >
-                              <IconTrash size={12} />
-                            </button>
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <Pagination page={page} total={filtered.length} pageSize={PAGE_SIZE} onChange={setPage} />
         </div>
-      </div>
+      )}
 
       {/* ── Edit Store Modal ─────────────────────────────────────── */}
       {editModal && editStore && (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setEditModal(false)}>
-          <div className="modal" style={{ maxWidth: 480 }}>
+          <div className="modal" style={{ maxWidth: 500 }}>
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 8,
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
                   background: 'var(--primary-light)',
                   color: 'var(--primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <IconStore size={18} />
+                  <IconStore size={20} />
                 </div>
                 <div>
-                  <span className="modal-title">Edit Store Branch</span>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Update details for {editStore.name}</div>
+                  <span className="modal-title" style={{ fontSize: 17, fontWeight: 800 }}>Edit Store Details</span>
+                  <div style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Update information for {editStore.name}</div>
                 </div>
               </div>
               <button className="modal-close" onClick={() => setEditModal(false)}>✕</button>
             </div>
             <form onSubmit={handleEdit}>
-              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 22 }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
                     Store / Branch Name <span style={{ color: 'var(--danger)' }}>*</span>
                   </label>
                   <input
                     value={editForm.name}
                     onChange={e => setEditForm({ ...editForm, name: e.target.value })}
                     required
+                    style={{ height: 42, borderRadius: 8 }}
                   />
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6 }}>
-                    Phone Number
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    Contact Phone Number
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none' }}>
-                      <IconPhone size={14} />
+                    <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none', display: 'flex' }}>
+                      <IconPhone size={15} />
                     </span>
                     <input
-                      style={{ paddingLeft: 34 }}
+                      style={{ paddingLeft: 36, height: 42, borderRadius: 8 }}
                       value={editForm.phone}
                       onChange={e => setEditForm({ ...editForm, phone: e.target.value })}
                       placeholder="e.g. +91 98765 43210"
@@ -447,29 +496,29 @@ export default function StoresPage() {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6 }}>
-                    Branch Location & Address
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    Location Address
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: 12, top: 12, color: 'var(--text-faint)', pointerEvents: 'none' }}>
-                      <IconMapPin size={14} />
+                    <span style={{ position: 'absolute', left: 12, top: 12, color: 'var(--text-faint)', pointerEvents: 'none', display: 'flex' }}>
+                      <IconMapPin size={15} />
                     </span>
                     <textarea
-                      style={{ paddingLeft: 34 }}
+                      style={{ paddingLeft: 36, borderRadius: 8 }}
                       value={editForm.address}
                       onChange={e => setEditForm({ ...editForm, address: e.target.value })}
                       rows={3}
-                      placeholder="Street, locality, city, pincode…"
+                      placeholder="Full street address, area, city, pincode…"
                     />
                   </div>
                 </div>
               </div>
-              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-light)', paddingTop: 16 }}>
-                <button type="button" className="btn btn-secondary" onClick={() => setEditModal(false)}>
+              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-light)', padding: '16px 22px', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setEditModal(false)} style={{ height: 40 }}>
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={editSaving}>
-                  {editSaving ? 'Saving Changes…' : 'Save Store Details'}
+                <button type="submit" className="btn btn-primary" disabled={editSaving} style={{ height: 40, fontWeight: 700 }}>
+                  {editSaving ? 'Saving Changes…' : 'Save Changes'}
                 </button>
               </div>
             </form>
