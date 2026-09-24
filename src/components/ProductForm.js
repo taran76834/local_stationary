@@ -1001,7 +1001,7 @@ export default function ProductForm({ productId }) {
                   type="text"
                   value={form.name}
                   onChange={e => handleNameChange(e.target.value)}
-                  placeholder="e.g. Whey Protein Isolate 1kg"
+                  placeholder="e.g. A4 Spiral Notebook 200 Pages"
                   required
                   style={{ width: '100%', fontSize: 15, padding: '10px 12px' }}
                 />
@@ -1014,7 +1014,7 @@ export default function ProductForm({ productId }) {
                     type="text"
                     value={form.slug}
                     onChange={e => { setSlugTouched(true); setForm({ ...form, slug: e.target.value }); }}
-                    placeholder="e.g. whey-protein-isolate-1kg"
+                    placeholder="e.g. a4-spiral-notebook-200-pages"
                     style={{ flex: 1 }}
                   />
                   <button
@@ -1032,7 +1032,7 @@ export default function ProductForm({ productId }) {
                 <RichTextEditor
                   value={form.description}
                   onChange={html => setForm({ ...form, description: html })}
-                  placeholder="Detailed product description, benefits, ingredients..."
+                  placeholder="Detailed product description, specifications, features..."
                 />
               </div>
             </div>
@@ -1154,7 +1154,7 @@ export default function ProductForm({ productId }) {
                               setVariationConfigs(list => list.map((c, i) => i === idx ? { ...c, valuesStr: newStr } : c));
                             }}
                             onRemoveTag={tagToRemove => handleRemoveOptionTag(cfg, tagToRemove)}
-                            placeholder="Type value (e.g. 1kg, 2kg) and press Enter"
+                            placeholder="Type value (e.g. Blue, Pack of 5, A4) and press Enter"
                           />
                         </div>
 
@@ -1718,7 +1718,7 @@ export default function ProductForm({ productId }) {
                           const val = e.target.value;
                           setForm(f => ({ ...f, tags: f.tags.map((item, i) => i === idx ? val : item) }));
                         }}
-                        placeholder="Tag (e.g. Workout, Isolate)"
+                        placeholder="Tag (e.g. Notebooks, Pens, Office)"
                         style={{ flex: 1, fontSize: 13 }}
                       />
                       {form.tags.length > 1 && (

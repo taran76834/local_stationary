@@ -181,7 +181,7 @@ export default function CategoriesPage() {
                         setSlug(slugify(val));
                       }
                     }}
-                    placeholder="e.g. Beverages"
+                    placeholder="e.g. Notebooks & Registers"
                     required
                   />
                 </div>
@@ -193,7 +193,7 @@ export default function CategoriesPage() {
                       setSlugTouched(true);
                       setSlug(e.target.value);
                     }}
-                    placeholder="e.g. beverages"
+                    placeholder="e.g. notebooks-registers"
                   />
                 </div>
                 <div className="form-group" style={{ marginBottom: 16 }}>
@@ -328,7 +328,7 @@ export default function CategoriesPage() {
                 </div>
                 <div className="form-group" style={{ marginBottom: 14 }}>
                   <label>Slug</label>
-                  <input value={editSlug} onChange={e => setEditSlug(e.target.value)} placeholder="e.g. beverages" />
+                  <input value={editSlug} onChange={e => setEditSlug(e.target.value)} placeholder="e.g. notebooks-registers" />
                 </div>
                 <div className="form-group">
                   <label>Category Image</label>

@@ -56,7 +56,7 @@ function saveProductImage(base64OrPath) {
     const fileName = `product_${Date.now()}_${Math.random().toString(36).substr(2, 6)}.${ext}`;
     const buffer = Buffer.from(base64Data, 'base64');
 
-    // Primary upload path (fitness app)
+    // Primary upload path (stationary app)
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
     fs.writeFileSync(path.join(uploadDir, fileName), buffer);

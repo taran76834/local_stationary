@@ -1,4 +1,4 @@
-const CACHE_NAME = 'invfitness-v1';
+const CACHE_NAME = 'invstationary-v1';
 const STATIC_ASSETS = [
   '/',
   '/dashboard',

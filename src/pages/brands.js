@@ -183,7 +183,7 @@ export default function BrandsPage() {
               <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label>Brand Name *</label>
-                  <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Nike" required />
+                  <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Classmate, Faber-Castell" required />
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label>Brand Image</label>

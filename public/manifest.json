@@ -1,7 +1,7 @@
 {
-  "name": "Invincible Fitness",
-  "short_name": "InvFitness",
-  "description": "Invincible Fitness Management System",
+  "name": "Invincible Stationary",
+  "short_name": "InvStationary",
+  "description": "Invincible Stationary Management System",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#0f172a",

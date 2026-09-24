@@ -40,73 +40,73 @@ async function seed() {
 
   // ── Stores ────────────────────────────────────────────────────────────────
   await insert('stores', ['name','address','phone'], [
-    ['Invincible Fitness - Main Branch', 'Shop 12, Fitness Plaza, MG Road, Bangalore', '+91 98765 43210'],
-    ['Invincible Fitness - Koramangala',  '2nd Floor, Sports Hub, Koramangala, Bangalore', '+91 91234 56789'],
-    ['Invincible Fitness - Whitefield',   'Unit 5, Tech Park Mall, Whitefield, Bangalore', '+91 87654 32109'],
+    ['Invincible Stationary - Main Branch', 'Shop 12, Stationary Plaza, MG Road, Bangalore', '+91 98765 43210'],
+    ['Invincible Stationary - Koramangala',  '2nd Floor, Student Hub, Koramangala, Bangalore', '+91 91234 56789'],
+    ['Invincible Stationary - Whitefield',   'Unit 5, Tech Park Mall, Whitefield, Bangalore', '+91 87654 32109'],
   ]);
   console.log('  ✅ Stores');
 
   // ── Categories ────────────────────────────────────────────────────────────
   await insert('categories', ['name'], [
-    ['Protein Supplements'], ['Pre-Workout'], ['Post-Workout'],
-    ['Mass Gainers'], ['Fat Burners'], ['Vitamins & Minerals'],
-    ['Amino Acids'], ['Creatine'], ['Bars & Snacks'], ['Apparel & Accessories'],
+    ['Notebooks & Registers'], ['Pens & Pencils'], ['Art & Craft Supplies'],
+    ['Files & Folders'], ['Calculators & Electronics'], ['Desk Accessories'],
+    ['Papers & Printing'], ['Adhesives & Tapes'], ['Geometry & Measuring'], ['School Bags & Cases'],
   ]);
   console.log('  ✅ Categories');
 
   // ── Brands ────────────────────────────────────────────────────────────────
   await insert('brands', ['name'], [
-    ['MuscleBlaze'], ['Optimum Nutrition'], ['MyProtein'],
-    ['BSN'], ['Dymatize'], ['MuscleTech'],
-    ['GNC'], ['Scitron'], ['AS-IT-IS Nutrition'], ['Nakpro'],
+    ['Classmate'], ['Faber-Castell'], ['Reynolds'],
+    ['Camlin'], ['Doms'], ['Parker'],
+    ['Casio'], ['Navneet'], ['Luxor'], ['Staedtler'],
   ]);
   console.log('  ✅ Brands');
 
   // ── Flavors ───────────────────────────────────────────────────────────────
   await insert('flavors', ['name'], [
-    ['Chocolate'], ['Vanilla'], ['Strawberry'], ['Mango'],
-    ['Cookies & Cream'], ['Banana'], ['Unflavored'], ['Rocky Road'],
-    ['Mocha'], ['Butterscotch'],
+    ['Blue'], ['Black'], ['Red'], ['Green'],
+    ['Assorted Colors'], ['White'], ['Multi-color'], ['Pastel'],
+    ['Transparent'], ['Glossy'],
   ]);
   console.log('  ✅ Flavors');
 
   // ── Suppliers ─────────────────────────────────────────────────────────────
   await insert('suppliers', ['name','contact','phone','email','address'], [
-    ['NutriSource India Pvt Ltd',  'Amit Shah',   '+91 99001 12233', 'amit@nutrisource.in',  'Warehouse 7, APMC Yard, Navi Mumbai'],
-    ['FitSupply Distributors',     'Priya Nair',  '+91 88002 23344', 'priya@fitsupply.in',   'Plot 22, Industrial Area, Pune'],
-    ['ProteinHub Wholesale',       'Karan Mehta', '+91 77003 34455', 'karan@proteinhub.in',  'Sector 18, Noida, UP'],
-    ['SupplementWorld Imports',    'Sneha Rao',   '+91 66004 45566', 'sneha@suppworld.in',   'T2 Cargo Complex, Chennai Airport'],
-    ['GymGear & Nutrition Co.',    'Vikram Joshi','+91 55005 56677', 'vikram@gymgear.in',    'Baner Road, Pune'],
+    ['National Paper & Stationery Ltd', 'Amit Shah',   '+91 99001 12233', 'amit@nationalpaper.in',  'Warehouse 7, APMC Yard, Navi Mumbai'],
+    ['Prime Office Supplies Co.',      'Priya Nair',  '+91 88002 23344', 'priya@primesupplies.in', 'Plot 22, Industrial Area, Pune'],
+    ['Allied School Products',         'Karan Mehta', '+91 77003 34455', 'karan@alliedschool.in',  'Sector 18, Noida, UP'],
+    ['Global Stationery Imports',      'Sneha Rao',   '+91 66004 45566', 'sneha@globalstationery.in','T2 Cargo Complex, Chennai Airport'],
+    ['Craft & Office Mart',            'Vikram Joshi','+91 55005 56677', 'vikram@craftmart.in',    'Baner Road, Pune'],
   ]);
   console.log('  ✅ Suppliers');
 
   // ── Products ──────────────────────────────────────────────────────────────
   const products = [
-    ['Whey Protein 1kg',           'WP-MB-1KG',  1499.00, 'Premium whey protein concentrate, 24g protein per serving'],
-    ['Whey Protein 2kg',           'WP-MB-2KG',  2799.00, 'Economy pack whey protein concentrate'],
-    ['Whey Isolate 1kg',           'WI-ON-1KG',  2999.00, 'Fast-absorbing whey isolate, 90% protein'],
-    ['Whey Isolate 2kg',           'WI-ON-2KG',  5499.00, 'Double pack whey isolate'],
-    ['Casein Protein 1kg',         'CP-MP-1KG',  2199.00, 'Slow-release micellar casein for overnight recovery'],
-    ['Mass Gainer 3kg',            'MG-MB-3KG',  1999.00, 'High-calorie mass gainer, 1250 kcal per serving'],
-    ['Mass Gainer 6kg',            'MG-MB-6KG',  3499.00, 'Bulk pack mass gainer'],
-    ['Pre-Workout Explosive',      'PW-BSN-300', 1799.00, 'High-stim pre-workout with caffeine and beta-alanine'],
-    ['Pre-Workout Stim-Free',      'PW-SF-250',  1599.00, 'Stimulant-free pump formula'],
-    ['Creatine Monohydrate 300g',  'CR-AISI-300', 599.00, 'Pure micronized creatine monohydrate'],
-    ['Creatine Monohydrate 500g',  'CR-AISI-500', 899.00, 'Economy creatine monohydrate'],
-    ['BCAA 2:1:1 250g',            'BC-SC-250',   799.00, 'Branched chain amino acids 2:1:1 ratio'],
-    ['BCAA 2:1:1 500g',            'BC-SC-500',  1399.00, 'Large pack BCAA'],
-    ['EAA Complex 300g',           'EA-MP-300',  1299.00, 'Essential amino acids with electrolytes'],
-    ['Fat Burner Thermogenic',     'FB-MT-90',   1899.00, '90 capsules thermogenic fat burner'],
-    ['L-Carnitine 1000mg',         'LC-GNC-60',   999.00, '60 capsules L-Carnitine for fat metabolism'],
-    ['Multivitamin 60 tabs',       'MV-GNC-60',   699.00, 'Complete daily multivitamin for athletes'],
-    ['Omega-3 Fish Oil 60 caps',   'OM-NK-60',    549.00, 'High-potency omega-3 fatty acids'],
-    ['Vitamin D3 + K2 60 caps',    'VD-NK-60',    449.00, 'Vitamin D3 2000IU with K2 for bone health'],
-    ['Protein Bar Box (12 pcs)',   'PB-MB-12',   1199.00, 'High protein snack bars, 20g protein each'],
-    ['Peanut Butter Crunchy 1kg',  'PB-CR-1KG',   699.00, 'Natural crunchy peanut butter, high protein'],
-    ['Shaker Bottle 700ml',        'SH-700',      299.00, 'BPA-free protein shaker with mixing ball'],
-    ['Gym Gloves (M)',             'GG-M',        499.00, 'Anti-slip gym training gloves'],
-    ['Resistance Bands Set',       'RB-SET',      799.00, 'Set of 5 resistance bands, various strengths'],
-    ['Whey Protein 500g (Trial)',  'WP-TR-500',   849.00, 'Trial size whey protein for beginners'],
+    ['A4 Spiral Notebook 200 Pages',    'NB-CM-200',  120.00, 'Premium ruled spiral notebook with 70 GSM paper'],
+    ['Hardbound Register 300 Pages',    'RG-NV-300',  180.00, 'Heavy duty hardbound accounting and office register'],
+    ['Ballpoint Pen Set (Pack of 10)',  'PN-RN-10',   100.00, 'Smooth ink flow 0.7mm ballpoint pens in blue'],
+    ['Gel Pen 0.5mm (Pack of 5)',       'GP-LX-05',   150.00, 'Quick-dry waterproof gel ink pens'],
+    ['Fountain Pen with Ink Converter',  'FP-PK-01',   499.00, 'Classic stainless steel nib fountain pen'],
+    ['A4 Copier Paper 75 GSM (500 sheets)','PP-JK-500', 350.00, 'High brightness multipurpose xerox copier paper'],
+    ['Color Pencil Set (24 Shades)',    'CP-FC-24',   220.00, 'Vibrant break-resistant hexagonal colored pencils'],
+    ['Scientific Calculator fx-991CW',  'CL-CS-991', 1295.00, 'Non-programmable scientific calculator with 540+ functions'],
+    ['Mathematical Drawing Box / Geometry Box','GB-CM-01', 140.00, 'Precision compass, divider, and measuring tools set'],
+    ['Desk Organizer & Pen Stand',      'DO-OM-01',   250.00, 'Multi-compartment mesh metal desk tidy organizer'],
+    ['Correction Tape 5mm x 6m',        'CT-DM-01',    60.00, 'Instant dry tear-resistant correction tape dispenser'],
+    ['Stapler & Staples 24/6 Set',      'ST-KG-24',   130.00, 'Standard half-strip office desk stapler with pins'],
+    ['Highlighter Marker Set (6 Colors)','HL-FC-06',   160.00, 'Fluorescent water-based non-toxic highlight markers'],
+    ['Sticky Notes 3x3 (Pack of 400)',  'SN-3M-400',  110.00, 'Self-adhesive repositionable memo note pads'],
+    ['Heavy Duty Paper Punch (2-Hole)', 'PP-KG-02',   190.00, 'All-metal construction 2-hole puncher, 20 sheets'],
+    ['Executive Leatherette Diary 2024','DR-EX-24',   399.00, 'Dated daily planner notebook with ribbon bookmark'],
+    ['Acrylic Paint Set 12 Tubes (12ml)','AP-FC-12',  240.00, 'Artist grade rich pigment acrylic colors set'],
+    ['Permanent Marker (Pack of 4)',    'PM-LX-04',   120.00, 'Waterproof bullet tip permanent marker pens'],
+    ['Display Folder 40 Pockets A4',    'DF-SM-40',   180.00, 'Clear transparent leaf file document portfolio'],
+    ['Whiteboard Marker Set (4 Colors)','WB-LX-04',   140.00, 'Easy wipe low odor whiteboard marker pens'],
+    ['Craft Scissors 6-inch',           'SC-FC-06',    80.00, 'Stainless steel sharp blade soft grip craft scissors'],
+    ['PVA Glue 200ml Bottle',           'GL-FV-200',   70.00, 'Strong bonding non-toxic paper and craft glue'],
+    ['Cardboard File Box Set of 3',     'FB-ST-03',   299.00, 'Collapsible document storage archive box'],
+    ['Expanding File Folder 12 Pockets','EF-ST-12',   260.00, 'Accordion document organizer folder with index tabs'],
+    ['Fine Tip Fineliner Pens (10 Shades)','FL-ST-10', 320.00, '0.4mm metal-clad tip precision drawing pens'],
   ];
 
   await insert('products', ['name','barcode','price','description'],
@@ -223,37 +223,37 @@ async function seed() {
   console.log('  ✅ Product → Flavors');
 
   // ── Store Products (stock) ────────────────────────────────────────────────
-  const mainStore = store['Invincible Fitness - Main Branch'];
-  const koraStore = store['Invincible Fitness - Koramangala'];
-  const whiteStore= store['Invincible Fitness - Whitefield'];
+  const mainStore = store['Invincible Stationary - Main Branch'];
+  const koraStore = store['Invincible Stationary - Koramangala'];
+  const whiteStore= store['Invincible Stationary - Whitefield'];
 
   const stockData = [
     // [product_name, main, kora, white]
-    ['Whey Protein 1kg',          45, 30, 20],
-    ['Whey Protein 2kg',          20, 15, 10],
-    ['Whey Isolate 1kg',          18, 12,  8],
-    ['Whey Isolate 2kg',           8,  5,  3],
-    ['Casein Protein 1kg',        12,  8,  5],
-    ['Mass Gainer 3kg',           25, 18, 12],
-    ['Mass Gainer 6kg',           10,  6,  4],
-    ['Pre-Workout Explosive',     30, 20, 15],
-    ['Pre-Workout Stim-Free',     20, 14, 10],
-    ['Creatine Monohydrate 300g', 50, 35, 25],
-    ['Creatine Monohydrate 500g', 30, 20, 15],
-    ['BCAA 2:1:1 250g',           35, 25, 18],
-    ['BCAA 2:1:1 500g',           20, 14, 10],
-    ['EAA Complex 300g',          15, 10,  7],
-    ['Fat Burner Thermogenic',    22, 16, 12],
-    ['L-Carnitine 1000mg',        18, 12,  8],
-    ['Multivitamin 60 tabs',      40, 28, 20],
-    ['Omega-3 Fish Oil 60 caps',  35, 24, 18],
-    ['Vitamin D3 + K2 60 caps',   30, 20, 15],
-    ['Protein Bar Box (12 pcs)',  25, 18, 12],
-    ['Peanut Butter Crunchy 1kg', 20, 14, 10],
-    ['Shaker Bottle 700ml',       40, 30, 20],
-    ['Gym Gloves (M)',            15, 10,  8],
-    ['Resistance Bands Set',      12,  8,  5],
-    ['Whey Protein 500g (Trial)', 30, 22, 15],
+    ['A4 Spiral Notebook 200 Pages',          45, 30, 20],
+    ['Hardbound Register 300 Pages',          20, 15, 10],
+    ['Ballpoint Pen Set (Pack of 10)',        50, 35, 25],
+    ['Gel Pen 0.5mm (Pack of 5)',             35, 25, 18],
+    ['Fountain Pen with Ink Converter',       12,  8,  5],
+    ['A4 Copier Paper 75 GSM (500 sheets)',   40, 25, 15],
+    ['Color Pencil Set (24 Shades)',          25, 18, 12],
+    ['Scientific Calculator fx-991CW',        15, 10,  8],
+    ['Mathematical Drawing Box / Geometry Box', 30, 20, 15],
+    ['Desk Organizer & Pen Stand',            22, 16, 12],
+    ['Correction Tape 5mm x 6m',              40, 28, 20],
+    ['Stapler & Staples 24/6 Set',            30, 20, 15],
+    ['Highlighter Marker Set (6 Colors)',     35, 24, 18],
+    ['Sticky Notes 3x3 (Pack of 400)',        50, 35, 25],
+    ['Heavy Duty Paper Punch (2-Hole)',       18, 12,  8],
+    ['Executive Leatherette Diary 2024',      20, 14, 10],
+    ['Acrylic Paint Set 12 Tubes (12ml)',     22, 15, 10],
+    ['Permanent Marker (Pack of 4)',          30, 20, 15],
+    ['Display Folder 40 Pockets A4',          25, 18, 12],
+    ['Whiteboard Marker Set (4 Colors)',      30, 22, 15],
+    ['Craft Scissors 6-inch',                 20, 14, 10],
+    ['PVA Glue 200ml Bottle',                 35, 25, 18],
+    ['Cardboard File Box Set of 3',           15, 10,  8],
+    ['Expanding File Folder 12 Pockets',      18, 12,  8],
+    ['Fine Tip Fineliner Pens (10 Shades)',   20, 14, 10],
   ];
 
   for (const [pName, main, kora, white] of stockData) {
@@ -286,11 +286,11 @@ async function seed() {
   const [supplierIds] = await conn.execute('SELECT id FROM suppliers LIMIT 3');
 
   const orders = [
-    { num: 'PO-2024-001', store: 'Invincible Fitness - Main Branch',    supplier: 'NutriSource India Pvt Ltd',  status: 'received', notes: 'Monthly restock' },
-    { num: 'PO-2024-002', store: 'Invincible Fitness - Koramangala',    supplier: 'FitSupply Distributors',     status: 'received', notes: 'New store opening stock' },
-    { num: 'PO-2024-003', store: 'Invincible Fitness - Whitefield',     supplier: 'ProteinHub Wholesale',       status: 'pending',  notes: 'Pending delivery' },
-    { num: 'PO-2024-004', store: 'Invincible Fitness - Main Branch',    supplier: 'SupplementWorld Imports',    status: 'received', notes: 'Imported brands restock' },
-    { num: 'PO-2024-005', store: 'Invincible Fitness - Koramangala',    supplier: 'GymGear & Nutrition Co.',    status: 'cancelled', notes: 'Cancelled due to pricing' },
+    { num: 'PO-2024-001', store: 'Invincible Stationary - Main Branch',    supplier: 'National Paper & Stationery Ltd',  status: 'received', notes: 'Monthly restock' },
+    { num: 'PO-2024-002', store: 'Invincible Stationary - Koramangala',    supplier: 'Prime Office Supplies Co.',        status: 'received', notes: 'New store opening stock' },
+    { num: 'PO-2024-003', store: 'Invincible Stationary - Whitefield',     supplier: 'Allied School Products',           status: 'pending',  notes: 'Pending delivery' },
+    { num: 'PO-2024-004', store: 'Invincible Stationary - Main Branch',    supplier: 'Global Stationery Imports',        status: 'received', notes: 'Imported brands restock' },
+    { num: 'PO-2024-005', store: 'Invincible Stationary - Koramangala',    supplier: 'Craft & Office Mart',              status: 'cancelled', notes: 'Cancelled due to pricing' },
   ];
 
   for (const o of orders) {
@@ -311,13 +311,13 @@ async function seed() {
 
   const poItems = {
     'PO-2024-001': [
-      ['Whey Protein 1kg', 20, 1200], ['Whey Protein 2kg', 10, 2200],
-      ['Creatine Monohydrate 300g', 30, 450], ['BCAA 2:1:1 250g', 20, 620],
-      ['Multivitamin 60 tabs', 25, 520],
+      ['A4 Spiral Notebook 200 Pages', 50, 90], ['Hardbound Register 300 Pages', 30, 140],
+      ['Ballpoint Pen Set (Pack of 10)', 100, 75], ['Gel Pen 0.5mm (Pack of 5)', 60, 110],
+      ['A4 Copier Paper 75 GSM (500 sheets)', 40, 270],
     ],
     'PO-2024-002': [
-      ['Whey Isolate 1kg', 15, 2400], ['Mass Gainer 3kg', 12, 1600],
-      ['Pre-Workout Explosive', 18, 1400], ['Protein Bar Box (12 pcs)', 15, 950],
+      ['Scientific Calculator fx-991CW', 20, 1050], ['Color Pencil Set (24 Shades)', 40, 165],
+      ['Mathematical Drawing Box / Geometry Box', 35, 105], ['Sticky Notes 3x3 (Pack of 400)', 50, 80],
     ],
   };
 
@@ -343,16 +343,16 @@ async function seed() {
   const customers  = custRows;
 
   const billsData = [
-    { store: 'Invincible Fitness - Main Branch',  customer: 0, payment: 'cash',  items: [['Whey Protein 1kg',1,1499],['Creatine Monohydrate 300g',1,599]], discount: 50 },
-    { store: 'Invincible Fitness - Main Branch',  customer: 1, payment: 'upi',   items: [['Whey Isolate 1kg',1,2999],['BCAA 2:1:1 250g',1,799]], discount: 0 },
-    { store: 'Invincible Fitness - Koramangala',  customer: 2, payment: 'card',  items: [['Mass Gainer 3kg',1,1999],['Shaker Bottle 700ml',1,299]], discount: 100 },
-    { store: 'Invincible Fitness - Main Branch',  customer: 3, payment: 'cash',  items: [['Pre-Workout Explosive',1,1799],['Multivitamin 60 tabs',1,699]], discount: 0 },
-    { store: 'Invincible Fitness - Whitefield',   customer: 4, payment: 'upi',   items: [['Whey Protein 1kg',2,1499],['Protein Bar Box (12 pcs)',1,1199]], discount: 200 },
-    { store: 'Invincible Fitness - Koramangala',  customer: 5, payment: 'cash',  items: [['Fat Burner Thermogenic',1,1899],['L-Carnitine 1000mg',1,999]], discount: 0 },
-    { store: 'Invincible Fitness - Main Branch',  customer: 6, payment: 'card',  items: [['Whey Protein 2kg',1,2799],['Gym Gloves (M)',1,499]], discount: 150 },
-    { store: 'Invincible Fitness - Whitefield',   customer: 7, payment: 'upi',   items: [['Creatine Monohydrate 500g',1,899],['EAA Complex 300g',1,1299]], discount: 0 },
-    { store: 'Invincible Fitness - Main Branch',  customer: 8, payment: 'cash',  items: [['Whey Protein 500g (Trial)',1,849],['Omega-3 Fish Oil 60 caps',1,549]], discount: 0 },
-    { store: 'Invincible Fitness - Koramangala',  customer: 9, payment: 'card',  items: [['Resistance Bands Set',1,799],['Peanut Butter Crunchy 1kg',1,699]], discount: 50 },
+    { store: 'Invincible Stationary - Main Branch',  customer: 0, payment: 'cash',  items: [['A4 Spiral Notebook 200 Pages',2,120],['Ballpoint Pen Set (Pack of 10)',1,100]], discount: 20 },
+    { store: 'Invincible Stationary - Main Branch',  customer: 1, payment: 'upi',   items: [['Scientific Calculator fx-991CW',1,1295],['Gel Pen 0.5mm (Pack of 5)',2,150]], discount: 0 },
+    { store: 'Invincible Stationary - Koramangala',  customer: 2, payment: 'card',  items: [['Color Pencil Set (24 Shades)',1,220],['Mathematical Drawing Box / Geometry Box',1,140]], discount: 30 },
+    { store: 'Invincible Stationary - Main Branch',  customer: 3, payment: 'cash',  items: [['A4 Copier Paper 75 GSM (500 sheets)',2,350],['Highlighter Marker Set (6 Colors)',1,160]], discount: 0 },
+    { store: 'Invincible Stationary - Whitefield',   customer: 4, payment: 'upi',   items: [['Executive Leatherette Diary 2024',1,399],['Fountain Pen with Ink Converter',1,499]], discount: 50 },
+    { store: 'Invincible Stationary - Koramangala',  customer: 5, payment: 'cash',  items: [['Desk Organizer & Pen Stand',1,250],['Stapler & Staples 24/6 Set',1,130]], discount: 0 },
+    { store: 'Invincible Stationary - Main Branch',  customer: 6, payment: 'card',  items: [['Hardbound Register 300 Pages',2,180],['Heavy Duty Paper Punch (2-Hole)',1,190]], discount: 25 },
+    { store: 'Invincible Stationary - Whitefield',   customer: 7, payment: 'upi',   items: [['Acrylic Paint Set 12 Tubes (12ml)',1,240],['Fine Tip Fineliner Pens (10 Shades)',1,320]], discount: 0 },
+    { store: 'Invincible Stationary - Main Branch',  customer: 8, payment: 'cash',  items: [['Sticky Notes 3x3 (Pack of 400)',2,110],['Correction Tape 5mm x 6m',1,60]], discount: 0 },
+    { store: 'Invincible Stationary - Koramangala',  customer: 9, payment: 'card',  items: [['Expanding File Folder 12 Pockets',1,260],['Display Folder 40 Pockets A4',1,180]], discount: 20 },
   ];
 
   for (let i = 0; i < billsData.length; i++) {

@@ -11,6 +11,9 @@ import {
   IconShoppingBag, IconUserCheck,
 } from './Icons';
 
+/* Flag to easily toggle Online Store menu visibility in the future */
+const SHOW_ONLINE_STORE = false;
+
 /* ─── Navigation config ─────────────────────────────────── */
 const NAV = [
   {
@@ -19,14 +22,16 @@ const NAV = [
       { href: '/dashboard', label: 'Dashboard', icon: IconDashboard, allowedRoles: ['admin', 'manager', 'store_minus', 'store_plus', 'sales'] },
     ],
   },
-  {
-    section: 'Online Store',
-    items: [
-      { href: '/orders',            label: 'Orders',            icon: IconShoppingBag, allowedRoles: ['admin', 'manager', 'sales'] },
-      { href: '/website-customers', label: 'Website Customers', icon: IconUserCheck,   allowedRoles: ['admin', 'manager', 'sales'] },
-      { href: '/shipping',          label: 'Shipping',          icon: IconTruck,       allowedRoles: ['admin', 'manager'] },
-    ],
-  },
+  ...(SHOW_ONLINE_STORE ? [
+    {
+      section: 'Online Store',
+      items: [
+        { href: '/orders',            label: 'Orders',            icon: IconShoppingBag, allowedRoles: ['admin', 'manager', 'sales'] },
+        { href: '/website-customers', label: 'Website Customers', icon: IconUserCheck,   allowedRoles: ['admin', 'manager', 'sales'] },
+        { href: '/shipping',          label: 'Shipping',          icon: IconTruck,       allowedRoles: ['admin', 'manager'] },
+      ],
+    },
+  ] : []),
   {
     section: 'Inventory',
     items: [
@@ -316,12 +321,15 @@ export default function Layout({ children, title, subtitle }) {
         {/* Logo */}
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">
-            <IconStore size={18} color="#fff" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
           </div>
           {sidebarExpanded && (
             <div className="sidebar-logo-text-wrap">
-              <div className="sidebar-logo-text">Invincible Fitness</div>
-              <div className="sidebar-logo-sub">Management system</div>
+              <div className="sidebar-logo-text">Invincible Stationary</div>
+              <div className="sidebar-logo-sub">Store &amp; Inventory Hub</div>
             </div>
           )}
         </div>
@@ -330,7 +338,8 @@ export default function Layout({ children, title, subtitle }) {
         <button
           className="sidebar-edge-toggle"
           onClick={toggleSidebar}
-          title={sidebarExpanded ? 'Collapse' : 'Expand'}
+          title={sidebarExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+          aria-label="Toggle sidebar"
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             {sidebarExpanded
@@ -370,6 +379,7 @@ export default function Layout({ children, title, subtitle }) {
               <div key={group.section} className="nav-group">
                 {sidebarExpanded && (
                   <div className="nav-section-header">
+                    <span className="nav-section-dot" />
                     <span className="nav-section-label">{group.section}</span>
                   </div>
                 )}
@@ -386,7 +396,7 @@ export default function Layout({ children, title, subtitle }) {
                         >
                           <span className="nav-icon"><Icon size={17} /></span>
                           {sidebarExpanded && <span className="nav-label">{item.label}</span>}
-
+                          {active && <span className="nav-active-pill" />}
                         </div>
                       </Link>
                     );
@@ -403,10 +413,13 @@ export default function Layout({ children, title, subtitle }) {
           {sidebarExpanded ? (
             <Link href="/profile">
               <div className="sidebar-user">
-                <div className="sidebar-avatar">{getInitials(user.name)}</div>
+                <div className="sidebar-avatar-wrap">
+                  <div className="sidebar-avatar">{getInitials(user.name)}</div>
+                  <span className="online-indicator" title="Online" />
+                </div>
                 <div className="sidebar-user-info">
                   <div className="sidebar-user-name">{user.name}</div>
-                  <div className="sidebar-user-role" style={{ color: user.role === 'admin' ? '#818cf8' : user.role === 'manager' ? '#60a5fa' : '#34d399' }}>
+                  <div className="sidebar-user-role-badge">
                     {getRoleLabel(user.role)}
                   </div>
                 </div>
@@ -418,8 +431,11 @@ export default function Layout({ children, title, subtitle }) {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
               <Link href="/profile">
-                <div className="sidebar-avatar" title={user.name} style={{ cursor: 'pointer' }}>
-                  {getInitials(user.name)}
+                <div className="sidebar-avatar-wrap" style={{ cursor: 'pointer' }}>
+                  <div className="sidebar-avatar" title={user.name}>
+                    {getInitials(user.name)}
+                  </div>
+                  <span className="online-indicator" />
                 </div>
               </Link>
               <button className="btn-logout-icon" onClick={logout} title="Logout" style={{ width: 32, height: 32, justifyContent: 'center' }}>
@@ -441,12 +457,27 @@ export default function Layout({ children, title, subtitle }) {
               <HamburgerIcon open={sidebarOpen} />
             </button>
             <div className="topbar-title-wrap">
-              <span className="topbar-title">{title || 'Dashboard'}</span>
+              <div className="topbar-breadcrumb">
+                <span className="topbar-badge-stationery">Stationery Hub</span>
+                <span className="breadcrumb-separator">/</span>
+                <span className="topbar-title">{title || 'Dashboard'}</span>
+              </div>
               {subtitle && <span className="topbar-sub">{subtitle}</span>}
             </div>
           </div>
 
           <div className="topbar-right">
+            {/* Quick Bill / POS button */}
+            <Link href="/bills" className="topbar-quick-pos hide-mobile">
+              <span className="quick-pos-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+              </span>
+              <span>New Bill</span>
+            </Link>
+
             {/* Theme toggle */}
             <button className="theme-toggle" onClick={toggle} aria-label="Toggle theme" title={dark ? 'Switch to light mode' : 'Switch to dark mode'}>
               {dark ? <MoonIcon /> : <SunIcon />}

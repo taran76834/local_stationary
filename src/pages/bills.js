@@ -1572,7 +1572,7 @@ export default function BillsPage() {
 <div class="receipt">
 
   <div class="header">
-    <div class="brand">Invincible Fitness</div>
+    <div class="brand">Invincible Stationary</div>
     <div class="bill-no">Receipt No: ${data.bill_number}</div>
   </div>
 

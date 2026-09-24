@@ -5,7 +5,7 @@ const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
 const smtpPort = Number(process.env.SMTP_PORT || 587);
 const smtpUser = process.env.SMTP_USER || '';
 const smtpPass = process.env.SMTP_PASS || '';
-const smtpFrom = process.env.SMTP_FROM || `"Invincible Fitness" <${smtpUser}>`;
+const smtpFrom = process.env.SMTP_FROM || `"Invincible Stationary" <${smtpUser}>`;
 const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL ||
   process.env.SITE_URL ||
@@ -163,7 +163,7 @@ function buildEmailShell({ logoUrl, headerAccentColor, bannerHtml, bodyHtml }) {
           <!-- Header -->
           <tr>
             <td style="background-color:#09090b;padding:28px 36px;text-align:center;border-bottom:2px solid ${headerAccentColor};">
-              <img src="${logoUrl}" alt="Invincible Fitness"
+              <img src="${logoUrl}" alt="Invincible Stationary"
                 style="height:48px;max-height:48px;width:auto;margin:0 auto;display:block;" />
             </td>
           </tr>
@@ -178,10 +178,10 @@ function buildEmailShell({ logoUrl, headerAccentColor, bannerHtml, bodyHtml }) {
           <tr>
             <td style="background-color:#09090b;padding:24px 36px;text-align:center;border-top:1px solid #18181b;">
               <p style="color:#cbd5e1;margin:0;font-size:11px;font-weight:500;">
-                Invincible Fitness Store · Jalandhar, Punjab, India
+                Invincible Stationary Store · Jalandhar, Punjab, India
               </p>
               <p style="color:#64748b;margin:8px 0 0 0;font-size:10px;font-weight:500;">
-                © ${new Date().getFullYear()} Invincible Fitness. All rights reserved.
+                © ${new Date().getFullYear()} Invincible Stationary. All rights reserved.
               </p>
             </td>
           </tr>
@@ -286,7 +286,7 @@ export async function sendOrderConfirmationEmail(data) {
     const info = await getTransporter().sendMail({
       from: smtpFrom,
       to: data.billing.email.trim(),
-      subject: `Order Invoice #${data.orderNumber} — Invincible Fitness`,
+      subject: `Order Invoice #${data.orderNumber} — Invincible Stationary`,
       html: htmlContent,
     });
     console.log(`Order confirmation email sent to ${data.billing.email}. ID:`, info.messageId);
@@ -330,7 +330,7 @@ function buildOrderCompletedHTML(data) {
       <td style="padding:28px 36px 8px 36px;">
         <p style="margin:0 0 20px 0;font-size:14px;color:#475569;line-height:1.6;">
           Great news! Your order <strong>#${data.orderNumber}</strong> has been marked as <strong>completed</strong>.
-          We hope you enjoy your products. Thank you for shopping with Invincible Fitness!
+          We hope you enjoy your products. Thank you for shopping with Invincible Stationary!
         </p>
         <table width="100%" border="0" cellspacing="0" cellpadding="0"
           style="background-color:#f8fafc;border-radius:14px;padding:18px 20px;border:1px solid #e2e8f0;">
@@ -393,7 +393,7 @@ export async function sendOrderCompletedEmail(data) {
     const info = await getTransporter().sendMail({
       from: smtpFrom,
       to: data.billing.email.trim(),
-      subject: `Your Order #${data.orderNumber} is Completed — Invincible Fitness`,
+      subject: `Your Order #${data.orderNumber} is Completed — Invincible Stationary`,
       html: htmlContent,
     });
     console.log(`Order completed email sent to ${data.billing.email}. ID:`, info.messageId);
@@ -418,7 +418,7 @@ function buildAccountSetupHTML(data) {
     <tr>
       <td style="padding:36px 36px 28px 36px;">
         <span style="font-size:10px;font-weight:800;color:#ea580c;text-transform:uppercase;letter-spacing:1.5px;display:block;margin-bottom:6px;">
-          Welcome to Invincible Fitness
+          Welcome to Invincible Stationary
         </span>
         <h2 style="margin:0 0 16px 0;font-size:20px;color:#0f172a;font-weight:900;">
           Set Password for Your Account
@@ -473,7 +473,7 @@ export async function sendAccountSetupEmail(data) {
     const info = await getTransporter().sendMail({
       from: smtpFrom,
       to: data.email.trim(),
-      subject: `Set Your Password — Invincible Fitness`,
+      subject: `Set Your Password — Invincible Stationary`,
       html: htmlContent,
     });
     console.log(`Account setup email sent to ${data.email}. ID:`, info.messageId);
@@ -507,7 +507,7 @@ function buildPasswordResetHTML(data) {
           Hello <strong>${data.name || 'Customer'}</strong>,
         </p>
         <p style="margin:0 0 20px 0;font-size:14px;color:#475569;line-height:1.6;">
-          We received a request to reset the password for your Invincible Fitness account associated
+          We received a request to reset the password for your Invincible Stationary account associated
           with <strong>${data.email}</strong>. Click the button below to choose a new password.
         </p>
         <div style="text-align:center;margin:32px 0;">
@@ -555,7 +555,7 @@ export async function sendPasswordResetEmail(data) {
     const info = await getTransporter().sendMail({
       from: smtpFrom,
       to: data.email.trim(),
-      subject: `Reset Your Password — Invincible Fitness`,
+      subject: `Reset Your Password — Invincible Stationary`,
       html: htmlContent,
     });
     console.log(`Password reset email sent to ${data.email}. ID:`, info.messageId);
@@ -673,7 +673,7 @@ export async function sendPaymentFailedEmail(data) {
     const info = await getTransporter().sendMail({
       from: smtpFrom,
       to: data.billing.email.trim(),
-      subject: `Action Required: Payment Unsuccessful for Order #${data.orderNumber} — Invincible Fitness`,
+      subject: `Action Required: Payment Unsuccessful for Order #${data.orderNumber} — Invincible Stationary`,
       html: htmlContent,
     });
     console.log(`Payment failed email sent to ${data.billing.email}. ID:`, info.messageId);

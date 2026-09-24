@@ -80,7 +80,7 @@ export default function OrderPrintPage() {
   return (
     <>
       <Head>
-        <title>Order {order.order_number} — Invincible Fitness</title>
+        <title>Order {order.order_number} — Invincible Stationary</title>
         <style>{`
           * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -368,7 +368,7 @@ export default function OrderPrintPage() {
         {/* ── HEADER ── */}
         <div className="header">
           <div>
-            <div className="brand-name">Invincible Fitness</div>
+            <div className="brand-name">Invincible Stationary</div>
             <div className="brand-sub">Jalandhar, Punjab, India</div>
           </div>
           <div className="invoice-title">
@@ -516,7 +516,7 @@ export default function OrderPrintPage() {
 
         {/* ── FOOTER ── */}
         <div className="footer">
-          <span>Invincible Fitness · Jalandhar, Punjab, India</span>
+          <span>Invincible Stationary · Jalandhar, Punjab, India</span>
           <span>Thank you for your order!</span>
           <span>Printed {new Date().toLocaleDateString('en-IN')}</span>
         </div>

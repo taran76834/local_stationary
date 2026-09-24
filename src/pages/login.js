@@ -34,7 +34,7 @@ export default function LoginPage() {
           <div className="login-logo-icon">
             <IconStore size={26} color="#fff" />
           </div>
-          <h1>Invincible Fitness</h1>
+          <h1>Invincible Stationary</h1>
           <p>Sign in to your admin panel</p>
         </div>
 
