@@ -323,7 +323,7 @@ export default function Dashboard() {
 
         {/* Card 1: Today's Revenue Performance Card */}
         <div style={{
-          background: 'linear-gradient(135deg, #1e1b4b 0%, #2e287a 50%, #4338ca 100%)',
+          background: 'linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%)',
           borderRadius: 20,
           padding: '24px 26px',
           color: '#ffffff',
@@ -332,7 +332,7 @@ export default function Dashboard() {
           justifyContent: 'space-between',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: '0 10px 30px -5px rgba(67, 56, 202, 0.45)',
+          boxShadow: '0 10px 30px -5px rgba(5, 150, 105, 0.35)',
           border: '1px solid rgba(255, 255, 255, 0.12)'
         }}>
           {/* Subtle ambient decorative circle */}
@@ -343,7 +343,7 @@ export default function Dashboard() {
             width: 140,
             height: 140,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(16,185,129,0.35) 0%, transparent 70%)',
             pointerEvents: 'none'
           }} />
 
@@ -351,11 +351,11 @@ export default function Dashboard() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399', boxShadow: '0 0 10px #34d399' }} />
-                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#c7d2fe' }}>
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a7f3d0' }}>
                   Today&apos;s Store Revenue
                 </span>
               </div>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,.6)', fontWeight: 600 }}>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,.7)', fontWeight: 600 }}>
                 {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
               </span>
             </div>
@@ -371,7 +371,7 @@ export default function Dashboard() {
               {loading ? '—' : `₹${fmt(s.today_revenue)}`}
             </div>
 
-            <div style={{ fontSize: 13, color: '#e0e7ff', marginTop: 8, fontWeight: 500 }}>
+            <div style={{ fontSize: 13, color: '#ecfdf5', marginTop: 8, fontWeight: 500 }}>
               {loading ? 'Loading...' : `${s.today_bills || 0} bill${s.today_bills !== 1 ? 's' : ''} generated today`}
             </div>
           </div>
@@ -387,7 +387,7 @@ export default function Dashboard() {
             flexWrap: 'wrap'
           }}>
             <div>
-              <div style={{ fontSize: 11, color: '#c7d2fe', fontWeight: 600 }}>This Month</div>
+              <div style={{ fontSize: 11, color: '#a7f3d0', fontWeight: 600 }}>This Month</div>
               <div style={{ fontSize: 14, fontWeight: 700, color: '#ffffff', marginTop: 1 }}>
                 ₹{fmt(s.month_revenue)}
               </div>
@@ -472,7 +472,7 @@ export default function Dashboard() {
                             <span style={{ fontSize: 11, color: 'var(--text-faint)', marginLeft: 6 }}>{row.bills} bill{row.bills !== 1 ? 's' : ''}</span>
                           </div>
                         </div>
-                        <MiniBar value={rev} max={todayRev} color="#4f46e5" />
+                        <MiniBar value={rev} max={todayRev} color="#10b981" />
                       </div>
                     );
                   })}

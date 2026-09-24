@@ -128,7 +128,7 @@ export default function StoresPage() {
             <button
               className="btn btn-primary"
               onClick={() => { setForm(EMPTY); setAddModal(true); }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 42, padding: '0 18px', fontWeight: 700, boxShadow: '0 4px 14px rgba(79, 70, 229, 0.35)' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 42, padding: '0 18px', fontWeight: 700 }}
             >
               <IconPlus size={16} /> Add New Store
             </button>
@@ -260,7 +260,7 @@ export default function StoresPage() {
                           justifyContent: 'center',
                           fontSize: 15,
                           fontWeight: 800,
-                          boxShadow: '0 2px 8px rgba(79, 70, 229, 0.25)',
+                          boxShadow: '0 2px 8px rgba(16, 232, 134, 0.35)',
                           flexShrink: 0
                         }}>
                           {initial}

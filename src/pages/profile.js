@@ -81,8 +81,8 @@ function PwaSettingsCard() {
     <div className="card">
       <div className="card-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 32, height: 32, background: '#eef2ff', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <div style={{ width: 32, height: 32, background: '#ecfdf5', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7 10 12 15 17 10"/>
               <line x1="12" y1="15" x2="12" y2="3"/>
@@ -171,9 +171,10 @@ export default function ProfilePage() {
           <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <div style={{
               width: 72, height: 72, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              background: '#10b981',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 26, fontWeight: 700, color: '#fff', flexShrink: 0,
+              boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
             }}>
               {getInitials(user?.name)}
             </div>
@@ -182,7 +183,7 @@ export default function ProfilePage() {
               <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{user?.email}</div>
               <div style={{ marginTop: 8 }}>
                 <span className="badge badge-indigo" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  <IconShield size={10} color="#6366f1" />
+                  <IconShield size={10} color="#059669" />
                   Administrator
                 </span>
               </div>
@@ -197,8 +198,8 @@ export default function ProfilePage() {
           <div className="card" style={{ marginBottom: 20 }}>
             <div className="card-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 32, height: 32, background: '#eef2ff', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IconUser size={15} color="#6366f1" />
+                <div style={{ width: 32, height: 32, background: '#ecfdf5', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IconUser size={15} color="#10b981" />
                 </div>
                 <div>
                   <div className="card-title">Personal Information</div>

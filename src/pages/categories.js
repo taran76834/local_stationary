@@ -4,6 +4,10 @@ import toast from 'react-hot-toast';
 import { useRole } from '@/hooks/useRole';
 import Pagination from '@/components/Pagination';
 import TableLoader from '@/components/TableLoader';
+import {
+  IconTag, IconEdit, IconTrash, IconBox,
+  IconCalendar, IconPlus, IconRefresh, IconSearch,
+} from '@/components/Icons';
 
 const PAGE_SIZE = 10;
 
@@ -56,27 +60,28 @@ function compressAndResizeImage(file, maxDimension = 800, quality = 0.85) {
 }
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading]       = useState(true);
+  const [categories, setCategories]   = useState([]);
+  const [loading, setLoading]         = useState(true);
 
-  // Add form states
-  const [name, setName]             = useState('');
-  const [slug, setSlug]             = useState('');
+  // Add modal states
+  const [addModal, setAddModal]       = useState(false);
+  const [name, setName]               = useState('');
+  const [slug, setSlug]               = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
-  const [image, setImage]           = useState('');
-  const [saving, setSaving]         = useState(false);
+  const [image, setImage]             = useState('');
+  const [saving, setSaving]           = useState(false);
 
   // Edit modal states
-  const [editModal, setEditModal]   = useState(false);
-  const [editItem, setEditItem]     = useState(null);
-  const [editName, setEditName]     = useState('');
-  const [editSlug, setEditSlug]     = useState('');
-  const [editImage, setEditImage]   = useState('');
-  const [editSaving, setEditSaving] = useState(false);
+  const [editModal, setEditModal]     = useState(false);
+  const [editItem, setEditItem]       = useState(null);
+  const [editName, setEditName]       = useState('');
+  const [editSlug, setEditSlug]       = useState('');
+  const [editImage, setEditImage]     = useState('');
+  const [editSaving, setEditSaving]   = useState(false);
 
-  const [page, setPage]             = useState(1);
-  const [search, setSearch]         = useState('');
-  const { canAdd, canDelete } = useRole();
+  const [page, setPage]               = useState(1);
+  const [search, setSearch]           = useState('');
+  const { canAdd, canDelete }         = useRole();
 
   async function load() {
     setLoading(true);
@@ -99,11 +104,12 @@ export default function CategoriesPage() {
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.message || `Server error (${res.status})`);
-      toast.success('Category added.');
+      toast.success('Category added successfully.');
       setName('');
       setSlug('');
       setSlugTouched(false);
       setImage('');
+      setAddModal(false);
       load();
     } catch (err) {
       toast.error(err.message);
@@ -143,7 +149,7 @@ export default function CategoriesPage() {
   }
 
   async function handleDelete(id, catName) {
-    if (!confirm(`Delete category "${catName}"?`)) return;
+    if (!confirm(`Are you sure you want to delete category "${catName}"?`)) return;
     try {
       const res  = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
       const data = await res.json().catch(() => null);
@@ -155,38 +161,281 @@ export default function CategoriesPage() {
     }
   }
 
-  const colSpan = canDelete ? 7 : 6;
   const filtered = categories.filter(c =>
     c.name?.toLowerCase().includes(search.toLowerCase()) ||
     (c.slug || '').toLowerCase().includes(search.toLowerCase())
   );
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalProducts = categories.reduce((acc, c) => acc + (parseInt(c.product_count, 10) || 0), 0);
 
   return (
     <Layout title="Categories">
-      <div className="grid-sidebar">
-        {canAdd && (
-          <div className="card">
-            <div className="card-header"><span className="card-title">Add Category</span></div>
+      {/* ── Top Header with Action ───────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-base)', display: 'flex', alignItems: 'center', gap: 10, letterSpacing: '-0.02em', margin: 0 }}>
+            Stationery Categories
+            <span className="badge badge-indigo" style={{ fontSize: 13, fontWeight: 700, padding: '3px 10px' }}>
+              {categories.length} {categories.length === 1 ? 'Category' : 'Categories'}
+            </span>
+          </h1>
+          <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 4 }}>
+            Organize stationery items, papers, art supplies, and writing instruments
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            className="btn btn-secondary"
+            onClick={load}
+            disabled={loading}
+            title="Refresh Category List"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, height: 42, padding: '0 14px' }}
+          >
+            <IconRefresh size={15} /> Refresh
+          </button>
+          {canAdd && (
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                setName('');
+                setSlug('');
+                setSlugTouched(false);
+                setImage('');
+                setAddModal(true);
+              }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 42, padding: '0 18px', fontWeight: 700 }}
+            >
+              <IconPlus size={16} /> Add Category
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── Top Summary Stats Pills ──────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 20 }}>
+        <div className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{
+            width: 44,
+            height: 44,
+            borderRadius: 12,
+            background: 'var(--primary-light)',
+            color: 'var(--primary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <IconTag size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
+              Total Categories
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-base)', lineHeight: 1.2 }}>
+              {loading ? '—' : categories.length}
+            </div>
+          </div>
+        </div>
+
+        <div className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{
+            width: 44,
+            height: 44,
+            borderRadius: 12,
+            background: 'rgba(16,185,129,.12)',
+            color: '#10b981',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <IconBox size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
+              Assigned Products
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-base)', lineHeight: 1.2 }}>
+              {loading ? '—' : totalProducts}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Full Width Modern Categories Data Table ──────────────── */}
+      <div className="card" style={{ overflow: 'hidden' }}>
+        <div className="card-header" style={{ flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-base)' }}>Category Directory</span>
+            {search && (
+              <span className="badge badge-gray" style={{ fontSize: 11.5 }}>
+                {filtered.length} found
+              </span>
+            )}
+          </div>
+
+          <div style={{ position: 'relative', width: 300, maxWidth: '100%' }}>
+            <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none', display: 'flex' }}>
+              <IconSearch size={14} />
+            </span>
+            <input
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search by category name or slug…"
+              style={{ paddingLeft: 36, fontSize: 13, height: 40, borderRadius: 10 }}
+            />
+          </div>
+        </div>
+
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style={{ width: 50, textAlign: 'center' }}>#</th>
+                <th style={{ width: 70 }}>Image</th>
+                <th style={{ minWidth: 220 }}>Category Name</th>
+                <th style={{ minWidth: 180 }}>URL Slug</th>
+                <th style={{ minWidth: 130, textAlign: 'center' }}>Products</th>
+                <th style={{ minWidth: 140 }}>Created Date</th>
+                {canDelete && <th style={{ width: 140, textAlign: 'right' }}>Actions</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <TableLoader cols={canDelete ? 7 : 6} />
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={canDelete ? 7 : 6}>
+                    <div className="empty-state" style={{ padding: '48px 20px' }}>
+                      <div className="empty-state-icon" style={{ width: 56, height: 56 }}>
+                        <IconTag size={28} />
+                      </div>
+                      <p style={{ fontSize: 16, fontWeight: 700, marginTop: 12 }}>{search ? 'No categories match your search' : 'No categories created yet'}</p>
+                      <span style={{ color: 'var(--text-muted)' }}>{search ? 'Try adjusting your search query' : 'Click "+ Add Category" above to create your first stationery category'}</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : paged.map((c, i) => (
+                <tr key={c.id} style={{ transition: 'background 0.15s ease' }}>
+                  <td style={{ textAlign: 'center', color: 'var(--text-faint)', fontSize: 12.5, fontWeight: 600 }}>
+                    {(page - 1) * PAGE_SIZE + i + 1}
+                  </td>
+                  <td>
+                    {c.image ? (
+                      <img
+                        src={c.image}
+                        alt={c.name}
+                        style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-base)', display: 'block' }}
+                      />
+                    ) : (
+                      <div style={{ width: 42, height: 42, borderRadius: 8, background: 'var(--primary-light)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-light)' }}>
+                        <IconTag size={18} />
+                      </div>
+                    )}
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-base)' }}>
+                      {c.name}
+                    </div>
+                    <div style={{ fontSize: 11.5, color: 'var(--text-faint)', marginTop: 2 }}>
+                      Category ID #{c.id}
+                    </div>
+                  </td>
+                  <td>
+                    <code style={{ fontSize: 12, background: 'var(--bg-base)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+                      {c.slug || slugify(c.name)}
+                    </code>
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    <span className={`badge ${c.product_count > 0 ? 'badge-indigo' : 'badge-gray'}`} style={{ padding: '4px 12px', fontSize: 12, fontWeight: 700 }}>
+                      {c.product_count || 0} products
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-muted)', fontSize: 12.5 }}>
+                      <IconCalendar size={13} color="var(--text-faint)" />
+                      {new Date(c.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </div>
+                  </td>
+                  {canDelete && (
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
+                        <button
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => openEdit(c)}
+                          title="Edit Category"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12 }}
+                        >
+                          <IconEdit size={13} /> Edit
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleDelete(c.id, c.name)}
+                          title="Delete Category"
+                          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '5px 8px', fontSize: 12 }}
+                        >
+                          <IconTrash size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Pagination page={page} total={filtered.length} pageSize={PAGE_SIZE} onChange={setPage} />
+      </div>
+
+      {/* ── Add Category Modal ───────────────────────────────────── */}
+      {addModal && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setAddModal(false)}>
+          <div className="modal" style={{ maxWidth: 480 }}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  background: 'var(--primary-light)',
+                  color: 'var(--primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <IconTag size={20} />
+                </div>
+                <div>
+                  <span className="modal-title" style={{ fontSize: 17, fontWeight: 800 }}>Add New Category</span>
+                  <div style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Create a stationery product category</div>
+                </div>
+              </div>
+              <button className="modal-close" onClick={() => setAddModal(false)}>✕</button>
+            </div>
             <form onSubmit={handleAdd}>
-              <div className="card-body">
-                <div className="form-group" style={{ marginBottom: 12 }}>
-                  <label>Category Name *</label>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 22 }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    Category Name <span style={{ color: 'var(--danger)' }}>*</span>
+                  </label>
                   <input
                     value={name}
                     onChange={e => {
                       const val = e.target.value;
                       setName(val);
-                      if (!slugTouched) {
-                        setSlug(slugify(val));
-                      }
+                      if (!slugTouched) setSlug(slugify(val));
                     }}
                     placeholder="e.g. Notebooks & Registers"
                     required
+                    style={{ height: 42, borderRadius: 8 }}
                   />
                 </div>
-                <div className="form-group" style={{ marginBottom: 12 }}>
-                  <label>Slug</label>
+
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    URL Slug
+                  </label>
                   <input
                     value={slug}
                     onChange={e => {
@@ -194,31 +443,35 @@ export default function CategoriesPage() {
                       setSlug(e.target.value);
                     }}
                     placeholder="e.g. notebooks-registers"
+                    style={{ height: 42, borderRadius: 8 }}
                   />
                 </div>
-                <div className="form-group" style={{ marginBottom: 16 }}>
-                  <label>Category Image</label>
-                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <div style={{ position: 'relative', width: 60, height: 60, borderRadius: 8, border: '2px dashed var(--border)', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    Category Image
+                  </label>
+                  <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+                    <div style={{ position: 'relative', width: 68, height: 68, borderRadius: 10, border: '2px dashed var(--border)', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
                       {image ? (
                         <>
                           <img src={image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           <button
                             type="button"
                             onClick={() => setImage('')}
-                            style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(239, 68, 68, 0.9)', color: '#fff', border: 'none', borderRadius: '50%', width: 18, height: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, lineHeight: 1 }}
+                            style={{ position: 'absolute', top: 3, right: 3, background: 'rgba(239, 68, 68, 0.95)', color: '#fff', border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, lineHeight: 1 }}
                             title="Remove image"
                           >
                             ✕
                           </button>
                         </>
                       ) : (
-                        <span style={{ fontSize: 22, color: 'var(--text-muted)' }}>📷</span>
+                        <IconTag size={24} color="var(--text-faint)" />
                       )}
                     </div>
                     <div>
-                      <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4, margin: 0 }}>
-                        📤 Upload Image
+                      <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0, height: 36, padding: '0 12px' }}>
+                        Upload Image
                         <input
                           type="file"
                           accept="image/*"
@@ -235,124 +488,99 @@ export default function CategoriesPage() {
                           }}
                         />
                       </label>
+                      <div style={{ fontSize: 11.5, color: 'var(--text-faint)', marginTop: 4 }}>PNG, JPG, WEBP recommended</div>
                     </div>
                   </div>
                 </div>
-                <button className="btn btn-primary" type="submit" disabled={saving} style={{ width: '100%', justifyContent: 'center' }}>
-                  {saving ? 'Adding…' : '+ Add Category'}
+              </div>
+              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-light)', padding: '16px 22px', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setAddModal(false)} style={{ height: 40 }}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={saving} style={{ height: 40, fontWeight: 700 }}>
+                  {saving ? 'Creating…' : '+ Create Category'}
                 </button>
               </div>
             </form>
           </div>
-        )}
-
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">🏷️ Categories ({filtered.length}{filtered.length !== categories.length ? ` of ${categories.length}` : ''})</span>
-            <div style={{ position: 'relative', flex: 1, maxWidth: 260, minWidth: 0 }}>
-              <svg style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none' }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search categories…" style={{ paddingLeft: 28, fontSize: 13, width: '100%' }} />
-            </div>
-          </div>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Slug</th>
-                  <th className="hide-mobile">Products</th>
-                  <th className="hide-mobile">Created</th>
-                  {canDelete && <th>Actions</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <TableLoader cols={colSpan} />
-                ) : categories.length === 0 ? (
-                  <tr><td colSpan={colSpan}><div className="empty-state"><div className="icon">🏷️</div><p>{search ? 'No categories match.' : 'No categories yet.'}</p></div></td></tr>
-                ) : paged.map((c, i) => (
-                  <tr key={c.id}>
-                    <td style={{ color: '#94a3b8', fontSize: 12 }}>{(page - 1) * PAGE_SIZE + i + 1}</td>
-                    <td>
-                      {c.image ? (
-                        <img
-                          src={c.image}
-                          alt={c.name}
-                          style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--border)', display: 'block' }}
-                        />
-                      ) : (
-                        <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--bg-base)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                          🏷️
-                        </div>
-                      )}
-                    </td>
-                    <td><strong>{c.name}</strong></td>
-                    <td><code style={{ fontSize: 12, color: 'var(--primary)' }}>{c.slug || '—'}</code></td>
-                    <td className="hide-mobile">
-                      <span style={{ background: c.product_count > 0 ? 'rgba(59,130,246,.15)' : 'var(--bg-base)', color: c.product_count > 0 ? '#3b82f6' : 'var(--text-faint)', borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>
-                        {c.product_count}
-                      </span>
-                    </td>
-                    <td className="hide-mobile" style={{ color: '#9ca3af', fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
-                    {canDelete && (
-                      <td>
-                        <div style={{ display: 'flex', gap: 6 }}>
-                          <button className="btn btn-secondary btn-sm" onClick={() => openEdit(c)}>✏️ Edit</button>
-                          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id, c.name)}>🗑️</button>
-                        </div>
-                      </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Pagination page={page} total={filtered.length} pageSize={PAGE_SIZE} onChange={setPage} />
         </div>
-      </div>
+      )}
 
+      {/* ── Edit Category Modal ──────────────────────────────────── */}
       {editModal && editItem && (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setEditModal(false)}>
-          <div className="modal" style={{ maxWidth: 420 }}>
+          <div className="modal" style={{ maxWidth: 480 }}>
             <div className="modal-header">
-              <span className="modal-title">Edit Category</span>
-              <button className="modal-close" onClick={() => setEditModal(false)}>×</button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  background: 'var(--primary-light)',
+                  color: 'var(--primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <IconTag size={20} />
+                </div>
+                <div>
+                  <span className="modal-title" style={{ fontSize: 17, fontWeight: 800 }}>Edit Category</span>
+                  <div style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>Update details for {editItem.name}</div>
+                </div>
+              </div>
+              <button className="modal-close" onClick={() => setEditModal(false)}>✕</button>
             </div>
             <form onSubmit={handleEdit}>
-              <div className="modal-body">
-                <div className="form-group" style={{ marginBottom: 12 }}>
-                  <label>Category Name *</label>
-                  <input value={editName} onChange={e => setEditName(e.target.value)} required autoFocus />
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 22 }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    Category Name <span style={{ color: 'var(--danger)' }}>*</span>
+                  </label>
+                  <input
+                    value={editName}
+                    onChange={e => setEditName(e.target.value)}
+                    required
+                    style={{ height: 42, borderRadius: 8 }}
+                  />
                 </div>
-                <div className="form-group" style={{ marginBottom: 14 }}>
-                  <label>Slug</label>
-                  <input value={editSlug} onChange={e => setEditSlug(e.target.value)} placeholder="e.g. notebooks-registers" />
+
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    URL Slug
+                  </label>
+                  <input
+                    value={editSlug}
+                    onChange={e => setEditSlug(e.target.value)}
+                    style={{ height: 42, borderRadius: 8 }}
+                  />
                 </div>
-                <div className="form-group">
-                  <label>Category Image</label>
-                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <div style={{ position: 'relative', width: 64, height: 64, borderRadius: 8, border: '2px dashed var(--border)', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-base)', marginBottom: 6, display: 'block' }}>
+                    Category Image
+                  </label>
+                  <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+                    <div style={{ position: 'relative', width: 68, height: 68, borderRadius: 10, border: '2px dashed var(--border)', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
                       {editImage ? (
                         <>
                           <img src={editImage} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           <button
                             type="button"
                             onClick={() => setEditImage('')}
-                            style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(239, 68, 68, 0.9)', color: '#fff', border: 'none', borderRadius: '50%', width: 18, height: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, lineHeight: 1 }}
+                            style={{ position: 'absolute', top: 3, right: 3, background: 'rgba(239, 68, 68, 0.95)', color: '#fff', border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, lineHeight: 1 }}
                             title="Remove image"
                           >
                             ✕
                           </button>
                         </>
                       ) : (
-                        <span style={{ fontSize: 22, color: 'var(--text-muted)' }}>📷</span>
+                        <IconTag size={24} color="var(--text-faint)" />
                       )}
                     </div>
                     <div>
-                      <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4, margin: 0 }}>
-                        📤 Upload Image
+                      <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0, height: 36, padding: '0 12px' }}>
+                        Upload Image
                         <input
                           type="file"
                           accept="image/*"
@@ -369,13 +597,18 @@ export default function CategoriesPage() {
                           }}
                         />
                       </label>
+                      <div style={{ fontSize: 11.5, color: 'var(--text-faint)', marginTop: 4 }}>PNG, JPG, WEBP recommended</div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setEditModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={editSaving}>{editSaving ? 'Saving…' : 'Save'}</button>
+              <div className="modal-footer" style={{ borderTop: '1px solid var(--border-light)', padding: '16px 22px', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setEditModal(false)} style={{ height: 40 }}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={editSaving} style={{ height: 40, fontWeight: 700 }}>
+                  {editSaving ? 'Saving Changes…' : 'Save Changes'}
+                </button>
               </div>
             </form>
           </div>

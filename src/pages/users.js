@@ -25,21 +25,21 @@ function getInitials(name = '') {
 }
 
 function roleBadgeClass(role) {
-  if (role === 'admin')       return 'badge-indigo';
+  if (role === 'admin')       return 'badge-green';
   if (role === 'manager')     return 'badge-blue';
   if (role === 'store_minus') return 'badge-green';
   if (role === 'store_plus')  return 'badge-amber';
-  if (role === 'sales')       return 'badge-purple';
-  return 'badge-purple';
+  if (role === 'sales')       return 'badge-blue';
+  return 'badge-green';
 }
 
 function roleBadgeColor(role) {
-  if (role === 'admin')       return '#6366f1';
+  if (role === 'admin')       return '#10b981';
   if (role === 'manager')     return '#3b82f6';
   if (role === 'store_minus') return '#10b981';
   if (role === 'store_plus')  return '#f59e0b';
-  if (role === 'sales')       return '#818cf8';
-  return '#818cf8';
+  if (role === 'sales')       return '#3b82f6';
+  return '#10b981';
 }
 
 function roleLabel(role) {
@@ -81,11 +81,11 @@ function StoreCheckboxPicker({ stores, selectedStores, onChange }) {
               display: 'flex',
               alignItems: 'center',
               padding: '12px 16px',
-              background: isSelected ? '#f0f4ff' : (idx % 2 === 0 ? 'transparent' : 'var(--bg-base)'),
+              background: isSelected ? '#ecfdf5' : (idx % 2 === 0 ? 'transparent' : 'var(--bg-base)'),
               borderBottom: idx < stores.length - 1 ? '1px solid var(--border)' : 'none',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
-              borderLeft: isSelected ? '3px solid #6366f1' : '3px solid transparent',
+              borderLeft: isSelected ? '3px solid #10b981' : '3px solid transparent',
               paddingLeft: isSelected ? '13px' : '16px',
             }}
             onMouseEnter={(e) => !isSelected && (e.currentTarget.style.background = 'var(--bg-hover, #f9fafb)')}
@@ -98,18 +98,18 @@ function StoreCheckboxPicker({ stores, selectedStores, onChange }) {
               checked={isSelected}
               onChange={() => toggleStore(s.id)}
               style={{
-                accentColor: '#6366f1',
+                accentColor: '#10b981',
                 marginRight: 12,
                 cursor: 'pointer',
                 width: 18,
                 height: 18,
               }}
             />
-            <IconStore size={15} color={isSelected ? '#6366f1' : '#818cf8'} style={{ marginRight: 10, flexShrink: 0 }} />
+            <IconStore size={15} color={isSelected ? '#10b981' : 'var(--text-muted)'} style={{ marginRight: 10, flexShrink: 0 }} />
             <span style={{
               fontSize: 14,
               fontWeight: 500,
-              color: isSelected ? '#6366f1' : 'var(--text-base)',
+              color: isSelected ? '#059669' : 'var(--text-base)',
               flex: 1,
               transition: 'color 0.2s ease',
             }}>
@@ -118,9 +118,9 @@ function StoreCheckboxPicker({ stores, selectedStores, onChange }) {
             {isSelected && (
               <span style={{
                 fontSize: 11,
-                color: '#6366f1',
+                color: '#065f46',
                 fontWeight: 700,
-                background: '#e0e7ff',
+                background: '#d1fae5',
                 padding: '4px 10px',
                 borderRadius: 6,
                 textTransform: 'uppercase',
@@ -153,7 +153,7 @@ function StoreCheckboxPicker({ stores, selectedStores, onChange }) {
 const PERM_OPTIONS = [
   { key: 'minus',     label: 'Minus',     color: '#10b981', desc: 'Create bills' },
   { key: 'plus',      label: 'Plus',      color: '#f59e0b', desc: 'Edit stock & receipts' },
-  { key: 'transfers', label: 'Transfers', color: '#6366f1', desc: 'Stock transfers' },
+  { key: 'transfers', label: 'Transfers', color: '#0284c7', desc: 'Stock transfers' },
 ];
 
 function normalizePerms(val) {
@@ -204,10 +204,10 @@ function StorePermPicker({ stores, storePerms, onChange }) {
               borderBottom: idx < stores.length - 1 ? '1px solid var(--border)' : 'none',
               gap: 12,
               transition: 'background 0.2s ease',
-              borderLeft: hasAny ? '3px solid #6366f1' : '3px solid transparent',
+              borderLeft: hasAny ? '3px solid #10b981' : '3px solid transparent',
             }}
           >
-            <IconStore size={15} color={hasAny ? '#6366f1' : '#818cf8'} style={{ flexShrink: 0 }} />
+            <IconStore size={15} color={hasAny ? '#10b981' : 'var(--text-muted)'} style={{ flexShrink: 0 }} />
             <span style={{
               fontSize: 14,
               fontWeight: 500,
@@ -465,7 +465,7 @@ export default function UsersPage() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <div style={{
                           width: 34, height: 34, borderRadius: '50%',
-                          background: u.id === currentUser?.id ? '#6366f1' : '#e2e8f0',
+                          background: u.id === currentUser?.id ? '#10b981' : '#e2e8f0',
                           color: u.id === currentUser?.id ? '#fff' : '#64748b',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           fontSize: 12, fontWeight: 700, flexShrink: 0,
@@ -475,7 +475,7 @@ export default function UsersPage() {
                         <div>
                           <div style={{ fontWeight: 600, color: 'var(--text-base)', fontSize: 13.5 }}>{u.name}</div>
                           {u.id === currentUser?.id && (
-                            <div style={{ fontSize: 11, color: '#6366f1', fontWeight: 600 }}>You</div>
+                            <div style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>You</div>
                           )}
                         </div>
                       </div>
@@ -492,7 +492,7 @@ export default function UsersPage() {
                     </td>
                     <td>
                       {u.role === 'admin' ? (
-                        <span style={{ fontSize: 12, color: '#6366f1', fontWeight: 600 }}>All Stores</span>
+                        <span style={{ fontSize: 12, color: '#10b981', fontWeight: 600 }}>All Stores</span>
                       ) : !storeChips || storeChips.length === 0 ? (
                         <span style={{ fontSize: 12, color: 'var(--text-faint)' }}>No store assigned</span>
                       ) : (
@@ -504,12 +504,12 @@ export default function UsersPage() {
                                 key={idx}
                                 className={
                                   chip.level === 'minus' ? 'badge badge-green' :
-                                  chip.level === 'transfers' ? 'badge badge-indigo' :
+                                  chip.level === 'transfers' ? 'badge badge-blue' :
                                   'badge badge-amber'
                                 }
                                 style={{ fontSize: 11.5, display: 'inline-flex', alignItems: 'center', gap: 4 }}
                               >
-                                <IconStore size={10} color={chip.level === 'minus' ? '#10b981' : chip.level === 'transfers' ? '#6366f1' : '#f59e0b'} />
+                                <IconStore size={10} color={chip.level === 'minus' ? '#10b981' : chip.level === 'transfers' ? '#0284c7' : '#f59e0b'} />
                                 {chip.name}
                                 <span style={{
                                   fontSize: 10,
@@ -574,7 +574,7 @@ export default function UsersPage() {
                   {/* Name */}
                   <div className="form-group">
                     <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ color: '#6366f1' }}>👤</span>
+                      <span style={{ color: '#10b981' }}>👤</span>
                       <span>Full Name *</span>
                     </label>
                     <input
@@ -593,7 +593,7 @@ export default function UsersPage() {
                   {/* Email */}
                   <div className="form-group">
                     <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ color: '#818cf8' }}>📧</span>
+                      <span style={{ color: '#10b981' }}>📧</span>
                       <span>Email Address *</span>
                     </label>
                     <input
@@ -660,7 +660,7 @@ export default function UsersPage() {
                   {form.role === 'sales' && (
                     <div className="form-group">
                       <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                        <IconStore size={14} color="#818cf8" />
+                        <IconStore size={14} color="#10b981" />
                         <span>Store Permissions *</span>
                         <span style={{ marginLeft: 'auto', fontSize: 11.5, color: '#94a3b8', fontWeight: 400 }}>
                           Minus = bills &nbsp;·&nbsp; Plus = stock &nbsp;·&nbsp; Transfers = stock transfers
@@ -689,7 +689,7 @@ export default function UsersPage() {
                   {form.role === 'sales' && (
                     <div className="form-group">
                       <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                        <span style={{ color: '#6366f1' }}>📦</span>
+                        <span style={{ color: '#10b981' }}>📦</span>
                         <span>Manage Products</span>
                       </label>
                       <div
@@ -699,9 +699,9 @@ export default function UsersPage() {
                           alignItems: 'center',
                           gap: 14,
                           padding: '12px 16px',
-                          border: `1.5px solid ${form.canManageProducts ? '#6366f1' : 'var(--border)'}`,
+                          border: `1.5px solid ${form.canManageProducts ? '#10b981' : 'var(--border)'}`,
                           borderRadius: 10,
-                          background: form.canManageProducts ? '#eef2ff' : 'transparent',
+                          background: form.canManageProducts ? '#ecfdf5' : 'transparent',
                           cursor: 'pointer',
                           transition: 'all 0.2s ease',
                           userSelect: 'none',
@@ -713,7 +713,7 @@ export default function UsersPage() {
                           width: 42,
                           height: 24,
                           borderRadius: 12,
-                          background: form.canManageProducts ? '#6366f1' : '#cbd5e1',
+                          background: form.canManageProducts ? '#10b981' : '#cbd5e1',
                           transition: 'background 0.2s ease',
                           flexShrink: 0,
                         }}>
@@ -733,7 +733,7 @@ export default function UsersPage() {
                           <div style={{
                             fontSize: 13.5,
                             fontWeight: 600,
-                            color: form.canManageProducts ? '#6366f1' : 'var(--text-base)',
+                            color: form.canManageProducts ? '#059669' : 'var(--text-base)',
                           }}>
                             {form.canManageProducts ? 'Enabled' : 'Disabled'}
                           </div>

@@ -3,13 +3,16 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRole } from '@/hooks/useRole';
 import { useTheme } from '@/context/ThemeContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   IconDashboard, IconBox, IconTag, IconDroplet, IconBrand,
   IconTruck, IconFactory, IconReceipt, IconLogout, IconStore,
   IconUsers, IconUser, IconCalendar, IconCustomers, IconTransfer,
   IconShoppingBag, IconUserCheck,
 } from './Icons';
+
+/* Module-level scroll position memory across page changes */
+let globalSidebarScrollTop = 0;
 
 /* Flag to easily toggle Online Store menu visibility in the future */
 const SHOW_ONLINE_STORE = false;
@@ -233,6 +236,46 @@ export default function Layout({ children, title, subtitle }) {
     return localStorage.getItem('sidebar-expanded') === 'true';
   });
   const [sidebarAnimating, setSidebarAnimating] = useState(false);
+  const navRef = useRef(null);
+
+  // Preserve and restore sidebar scroll across page navigation
+  const handleNavScroll = (e) => {
+    globalSidebarScrollTop = e.currentTarget.scrollTop;
+    try { sessionStorage.setItem('sidebar_scroll_pos', String(e.currentTarget.scrollTop)); } catch (_) {}
+  };
+
+  const handleLinkClick = () => {
+    if (navRef.current) {
+      globalSidebarScrollTop = navRef.current.scrollTop;
+      try { sessionStorage.setItem('sidebar_scroll_pos', String(navRef.current.scrollTop)); } catch (_) {}
+    }
+  };
+
+  useEffect(() => {
+    const restoreScroll = () => {
+      if (!navRef.current) return;
+      let saved = globalSidebarScrollTop;
+      if (!saved && typeof window !== 'undefined') {
+        saved = Number(sessionStorage.getItem('sidebar_scroll_pos') || 0);
+      }
+      if (saved > 0) {
+        navRef.current.scrollTop = saved;
+      }
+      // Ensure the active nav item is visible
+      const activeItem = navRef.current.querySelector('.nav-item.active');
+      if (activeItem) {
+        activeItem.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
+    };
+
+    restoreScroll();
+    const t1 = setTimeout(restoreScroll, 20);
+    const t2 = setTimeout(restoreScroll, 100);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [router.pathname]);
 
   function toggleSidebar() {
     setSidebarAnimating(true);
@@ -350,7 +393,7 @@ export default function Layout({ children, title, subtitle }) {
         </button>
 
         {/* Nav */}
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" ref={navRef} onScroll={handleNavScroll}>
           {NAV.map(group => {
             const visibleItems = group.items.filter(item => {
               const roles = item.allowedRoles || (item.adminOnly ? ['admin'] : ['admin', 'manager']);
@@ -389,7 +432,7 @@ export default function Layout({ children, title, subtitle }) {
                     const Icon   = item.icon;
                     const active = router.pathname === item.href;
                     return (
-                      <Link key={item.href} href={item.href}>
+                      <Link key={item.href} href={item.href} scroll={false} onClick={handleLinkClick}>
                         <div
                           className={`nav-item${active ? ' active' : ''}`}
                           title={!sidebarExpanded ? item.label : undefined}
@@ -411,7 +454,7 @@ export default function Layout({ children, title, subtitle }) {
         <div className="sidebar-footer">
           <SidebarInstallBtn collapsed={!sidebarExpanded} />
           {sidebarExpanded ? (
-            <Link href="/profile">
+            <Link href="/profile" scroll={false} onClick={handleLinkClick}>
               <div className="sidebar-user">
                 <div className="sidebar-avatar-wrap">
                   <div className="sidebar-avatar">{getInitials(user.name)}</div>
@@ -430,7 +473,7 @@ export default function Layout({ children, title, subtitle }) {
             </Link>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <Link href="/profile">
+              <Link href="/profile" scroll={false} onClick={handleLinkClick}>
                 <div className="sidebar-avatar-wrap" style={{ cursor: 'pointer' }}>
                   <div className="sidebar-avatar" title={user.name}>
                     {getInitials(user.name)}

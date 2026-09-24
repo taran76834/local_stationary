@@ -7,6 +7,11 @@ import SearchableSelect from '@/components/SearchableSelect';
 import { useRole } from '@/hooks/useRole';
 import Pagination from '@/components/Pagination';
 import TableLoader from '@/components/TableLoader';
+import {
+  IconTruck, IconBox, IconStore, IconFactory,
+  IconCalendar, IconEdit, IconTrash, IconEye,
+  IconPlus, IconRefresh, IconSearch, IconReceipt,
+} from '@/components/Icons';
 
 function parseVariationAttributes(attributes) {
   if (!attributes) return [];
@@ -704,7 +709,7 @@ export default function PurchaseOrdersPage() {
 
   function getVariationOptions(prod) {
     if (!prod) return [];
-    const fpList      = prod.flavor_prices || [];
+    const fpList = prod.flavor_prices || [];
     const flavorsList = prod.flavors || [];
 
     if (fpList.length > 0) {
@@ -788,7 +793,7 @@ export default function PurchaseOrdersPage() {
     const opts = getVariationOptions(prod);
     const firstOpt = opts.length > 0 ? opts[0] : null;
     const variationId = firstOpt ? firstOpt.variation_id : null;
-    const variAttr    = firstOpt ? (firstOpt.vari_attribute || '') : '';
+    const variAttr = firstOpt ? (firstOpt.vari_attribute || '') : '';
     let cost = (firstOpt && firstOpt.price !== undefined && firstOpt.price !== null && firstOpt.price !== '') ? firstOpt.price : (prod.price || '');
 
     setItems(prev => {
@@ -825,9 +830,9 @@ export default function PurchaseOrdersPage() {
         if (prod) {
           const opts = getVariationOptions(prod);
           const firstOpt = opts.length > 0 ? opts[0] : null;
-          next[i].variation_id   = firstOpt ? firstOpt.variation_id : null;
+          next[i].variation_id = firstOpt ? firstOpt.variation_id : null;
           next[i].vari_attribute = firstOpt ? (firstOpt.vari_attribute || '') : '';
-          next[i].unit_cost      = (firstOpt && firstOpt.price !== undefined && firstOpt.price !== null && firstOpt.price !== '') ? firstOpt.price : (prod.price || '');
+          next[i].unit_cost = (firstOpt && firstOpt.price !== undefined && firstOpt.price !== null && firstOpt.price !== '') ? firstOpt.price : (prod.price || '');
         }
       }
     }
@@ -871,8 +876,8 @@ export default function PurchaseOrdersPage() {
       if (matchedVar) {
         targetVarId = matchedVar.id || null;
         varLabel = formatAttributesLabel(matchedVar.attributes);
-        targetCost = (matchedVar.price !== undefined && matchedVar.price !== null && matchedVar.price !== '') 
-          ? matchedVar.price 
+        targetCost = (matchedVar.price !== undefined && matchedVar.price !== null && matchedVar.price !== '')
+          ? matchedVar.price
           : (matchedProd.price || '');
         targetVariAttr = matchedVar.attributes ? (typeof matchedVar.attributes === 'string' ? matchedVar.attributes : JSON.stringify(matchedVar.attributes)) : '';
       } else {
@@ -1023,39 +1028,72 @@ export default function PurchaseOrdersPage() {
     return true;
   });
 
+  const totalPurchaseValue = orders.reduce((sum, o) => sum + (parseFloat(o.total_amount) || 0), 0);
+  const approvedCount = orders.filter(o => o.status === 'received').length;
+  const pendingCount = orders.filter(o => o.status === 'pending').length;
+
   return (
-    <Layout title="Product Receipt">
-      <div className="card">
-        <div className="card-header">
-          <div>
-            <div className="card-title">Product Receipts ({filtered.length}{filtered.length !== orders.length ? ` of ${orders.length}` : ''})</div>
-            <div className="card-sub">Expiry dates are set per item when creating the receipt</div>
-          </div>
-          {canAddPurchaseOrder && (
-            <button className="btn btn-primary" onClick={openNew}>+ New Receipt</button>
-          )}
+    <Layout title="Product Receipts">
+      {/* ── Top Header with Action ───────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-base)', display: 'flex', alignItems: 'center', gap: 10, letterSpacing: '-0.02em', margin: 0 }}>
+            Stationery Product Receipts
+            <span className="badge badge-indigo" style={{ fontSize: 13, fontWeight: 700, padding: '3px 10px' }}>
+              {orders.length} {orders.length === 1 ? 'Receipt' : 'Receipts'}
+            </span>
+          </h1>
+          <p style={{ fontSize: 13.5, color: 'var(--text-muted)', marginTop: 4 }}>
+            Stock inward, supplier purchases, cost pricing, and batch expiry tracking
+          </p>
         </div>
 
-        {/* ── Filter bar ── */}
-        <div style={{ padding: '14px 22px', borderBottom: '1px solid var(--border)', display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'flex-end' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            className="btn btn-secondary"
+            onClick={load}
+            disabled={loading}
+            title="Refresh Receipts"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, height: 42, padding: '0 14px' }}
+          >
+            <IconRefresh size={15} /> Refresh
+          </button>
+          {canAddPurchaseOrder && (
+            <button
+              className="btn btn-primary"
+              onClick={openNew}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 42, padding: '0 18px', fontWeight: 700 }}
+            >
+              <IconPlus size={16} /> New Receipt
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── Main Data Card & Filters ─────────────────────────────── */}
+      <div className="card" style={{ overflow: 'hidden' }}>
+        {/* Filter bar */}
+        <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--border-light)', display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end', background: 'var(--bg-card)' }}>
 
           {/* Search */}
-          <div style={{ flex: '1 1 200px', minWidth: 180 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.05em' }}>Search</div>
+          <div style={{ flex: '1 1 220px', minWidth: 200 }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.05em' }}>Search Receipt</div>
             <div style={{ position: 'relative' }}>
-              <svg style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none' }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none', display: 'flex' }}>
+                <IconSearch size={14} />
+              </span>
               <input
                 value={searchText}
                 onChange={e => { setSearchText(e.target.value); setPage(1); }}
                 placeholder="Receipt no, supplier, store…"
-                style={{ paddingLeft: 30, width: '100%' }}
+                style={{ paddingLeft: 34, width: '100%', height: 40, borderRadius: 8 }}
               />
             </div>
           </div>
 
           {/* Store */}
-          <div style={{ flex: '1 1 160px', minWidth: 150 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.05em' }}>Store</div>
+          <div style={{ flex: '1 1 180px', minWidth: 160 }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.05em' }}>Store Branch</div>
             <SearchableSelect
               options={availableStores.map(s => ({ value: s.id, label: s.name }))}
               value={filterStore}
@@ -1065,8 +1103,8 @@ export default function PurchaseOrdersPage() {
           </div>
 
           {/* Supplier */}
-          <div style={{ flex: '1 1 160px', minWidth: 150 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.05em' }}>Supplier</div>
+          <div style={{ flex: '1 1 180px', minWidth: 160 }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.05em' }}>Supplier</div>
             <SearchableSelect
               options={suppliers.map(s => ({ value: s.id, label: s.name }))}
               value={filterSupplier}
@@ -1077,13 +1115,13 @@ export default function PurchaseOrdersPage() {
 
           {/* Status */}
           <div style={{ flex: '0 0 auto' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.05em' }}>Status</div>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.05em' }}>Status</div>
             <select
               value={statusFilter}
               onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-              style={{ padding: '9px 12px', borderRadius: 6, border: '1.5px solid var(--border)', fontSize: 13, background: 'var(--bg-input)', color: 'var(--text-base)', cursor: 'pointer', height: 38 }}
+              style={{ padding: '0 12px', borderRadius: 8, border: '1.5px solid var(--border)', fontSize: 13, background: 'var(--bg-input)', color: 'var(--text-base)', cursor: 'pointer', height: 40 }}
             >
-              <option value="">All</option>
+              <option value="">All Statuses</option>
               <option value="pending">Pending</option>
               <option value="received">Approved</option>
               <option value="cancelled">Cancelled</option>
@@ -1092,30 +1130,30 @@ export default function PurchaseOrdersPage() {
 
           {/* Date from */}
           <div style={{ flex: '0 0 auto' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.05em' }}>From</div>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.05em' }}>From Date</div>
             <input
               type="date"
               value={dateFrom}
               onChange={e => { setDateFrom(e.target.value); setPage(1); }}
-              style={{ width: 145 }}
+              style={{ width: 145, height: 40, borderRadius: 8 }}
             />
           </div>
 
           {/* Date to */}
           <div style={{ flex: '0 0 auto' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.05em' }}>To</div>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.05em' }}>To Date</div>
             <input
               type="date"
               value={dateTo}
               onChange={e => { setDateTo(e.target.value); setPage(1); }}
-              style={{ width: 145 }}
+              style={{ width: 145, height: 40, borderRadius: 8 }}
             />
           </div>
 
           {/* Clear */}
           {hasFilter && (
-            <div style={{ flex: '0 0 auto', paddingTop: 20 }}>
-              <button className="btn btn-secondary btn-sm" onClick={resetFilters}>✕ Clear</button>
+            <div style={{ flex: '0 0 auto', paddingBottom: 1 }}>
+              <button className="btn btn-secondary btn-sm" onClick={resetFilters} style={{ height: 40, padding: '0 14px' }}>✕ Reset</button>
             </div>
           )}
         </div>
@@ -1124,15 +1162,15 @@ export default function PurchaseOrdersPage() {
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Receipt No.</th>
-                <th className="hide-mobile">Store</th>
-                <th className="hide-mobile">Supplier</th>
-                <th className="hide-mobile">Created By</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th className="hide-mobile">DATE &amp; TIME</th>
-                <th>Actions</th>
+                <th style={{ width: 50, textAlign: 'center' }}>#</th>
+                <th style={{ minWidth: 180 }}>Receipt No.</th>
+                <th style={{ minWidth: 160 }}>Store Branch</th>
+                <th style={{ minWidth: 160 }}>Supplier</th>
+                <th style={{ minWidth: 140 }}>Created By</th>
+                <th style={{ minWidth: 110 }}>Status</th>
+                <th style={{ minWidth: 120, textAlign: 'right' }}>Total Amount</th>
+                <th style={{ minWidth: 160 }}>Date &amp; Time</th>
+                <th style={{ width: 130, textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -1141,27 +1179,69 @@ export default function PurchaseOrdersPage() {
               ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={9}>
-                    <div className="empty-state">
-                      <div className="empty-state-icon">🛒</div>
-                      <p>{statusFilter ? `No ${statusFilter} orders.` : 'No receipts yet.'}</p>
+                    <div className="empty-state" style={{ padding: '48px 20px' }}>
+                      <div className="empty-state-icon" style={{ width: 56, height: 56 }}>
+                        <IconTruck size={28} />
+                      </div>
+                      <p style={{ fontSize: 16, fontWeight: 700, marginTop: 12 }}>{statusFilter ? `No ${statusFilter} receipts found` : 'No product receipts yet'}</p>
+                      <span style={{ color: 'var(--text-muted)' }}>{hasFilter ? 'Try clearing your filters or changing search keywords' : 'Click "+ New Receipt" to record supplier stock inward'}</span>
                     </div>
                   </td>
                 </tr>
               ) : filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((o, i) => (
-                <tr key={o.id}>
-                  <td style={{ color: '#94a3b8', fontSize: 12 }}>{(page - 1) * PAGE_SIZE + i + 1}</td>
-                  <td>
-                    <strong style={{ color: '#6366f1' }}>{o.order_number}</strong>
-                    <div className="show-mobile" style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{formatISTDateTime(o.ordered_at)}</div>
+                <tr key={o.id} style={{ transition: 'background 0.15s ease' }}>
+                  <td style={{ textAlign: 'center', color: 'var(--text-faint)', fontSize: 12.5, fontWeight: 600 }}>
+                    {(page - 1) * PAGE_SIZE + i + 1}
                   </td>
-                  <td className="hide-mobile">{o.store_name ? <span className="badge badge-indigo">{o.store_name}</span> : <span style={{ color: '#94a3b8' }}>—</span>}</td>
-                  <td className="hide-mobile">{o.supplier_name || <span style={{ color: '#94a3b8' }}>—</span>}</td>
-                  <td className="hide-mobile">{o.created_by_name ? <span style={{ fontSize: 12, fontWeight: 600, color: '#6366f1' }}>{o.created_by_name}</span> : <span style={{ color: '#94a3b8' }}>—</span>}</td>
-                  <td><span className={`badge ${STATUS_BADGE[o.status]}`}>{STATUS_LABELS[o.status]}</span></td>
-                  <td style={{ fontWeight: 600 }}>₹{parseFloat(o.total_amount).toFixed(2)}</td>
-                  <td className="hide-mobile" style={{ fontSize: 12, color: '#94a3b8' }}>{formatISTDateTime(o.ordered_at)}</td>
                   <td>
-                    <div style={{ display: 'flex', gap: 6 }}>
+                    <div>
+                      <strong style={{ color: 'var(--primary)', fontSize: 13.5, letterSpacing: '0.01em' }}>{o.order_number}</strong>
+                    </div>
+                  </td>
+                  <td>
+                    {o.store_name ? (
+                      <span className="badge badge-indigo" style={{ fontWeight: 700 }}>
+                        {o.store_name}
+                      </span>
+                    ) : (
+                      <span style={{ color: 'var(--text-faint)' }}>—</span>
+                    )}
+                  </td>
+                  <td>
+                    {o.supplier_name ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, fontSize: 13, color: 'var(--text-base)' }}>
+                        <IconFactory size={14} color="var(--text-faint)" />
+                        {o.supplier_name}
+                      </div>
+                    ) : (
+                      <span style={{ color: 'var(--text-faint)' }}>—</span>
+                    )}
+                  </td>
+                  <td>
+                    {o.created_by_name ? (
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-muted)' }}>
+                        {o.created_by_name}
+                      </span>
+                    ) : (
+                      <span style={{ color: 'var(--text-faint)' }}>—</span>
+                    )}
+                  </td>
+                  <td>
+                    <span className={`badge ${STATUS_BADGE[o.status] || 'badge-gray'}`} style={{ fontWeight: 700 }}>
+                      {STATUS_LABELS[o.status] || o.status}
+                    </span>
+                  </td>
+                  <td style={{ textAlign: 'right', fontWeight: 800, fontSize: 13.5, color: 'var(--text-base)' }}>
+                    ₹{parseFloat(o.total_amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: 'var(--text-muted)' }}>
+                      <IconCalendar size={13} color="var(--text-faint)" />
+                      {formatISTDateTime(o.ordered_at)}
+                    </div>
+                  </td>
+                  <td style={{ textAlign: 'right' }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
                       <button
                         className="btn btn-secondary btn-sm"
                         onClick={() => { setHoveredOrder(null); openDetail(o.id); }}
@@ -1169,20 +1249,31 @@ export default function PurchaseOrdersPage() {
                         onMouseLeave={handleEyeHoverEnd}
                         onTouchStart={e => handleEyeHoverStart(e, o)}
                         onTouchEnd={handleEyeHoverEnd}
-                        title="View receipt"
+                        title="View Receipt Details"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 9px', fontSize: 12 }}
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                        <IconEye size={13} /> View
                       </button>
                       {canAddPurchaseOrder && (isSales ? isPlusForStore(o.store_id) : true) && o.status === 'pending' && (
                         <button
                           className="btn btn-success btn-sm"
                           disabled={approvingId === o.id}
                           onClick={() => handleApprove(o.id)}
+                          style={{ display: 'inline-flex', alignItems: 'center', padding: '5px 10px', fontSize: 12, fontWeight: 700 }}
                         >
                           {approvingId === o.id ? '…' : 'Approve'}
                         </button>
                       )}
-                      {isAdmin && <button className="btn btn-danger btn-sm" onClick={() => handleDelete(o.id)}>🗑️</button>}
+                      {isAdmin && (
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleDelete(o.id)}
+                          title="Delete Receipt"
+                          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '5px 8px', fontSize: 12 }}
+                        >
+                          <IconTrash size={13} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
